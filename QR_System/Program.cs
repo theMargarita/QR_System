@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+
+using Infrastructure.Data;
 
 namespace QR_System
 {
