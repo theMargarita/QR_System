@@ -16,5 +16,20 @@ namespace Infrastructure.Data
         public DbSet<Product> Products { get; set; }
         public DbSet<UserTab> UserTabs { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
+
+        //to "default" to restrict delete behavior
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+
+            foreach (var fk in modelBuilder.Model
+                .GetEntityTypes()
+                .SelectMany(e => 
+                e.GetForeignKeys()))
+            {
+                fk.DeleteBehavior = DeleteBehavior.Restrict;
+            }
+
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }

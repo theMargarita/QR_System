@@ -12,6 +12,7 @@
         //navigation property - not sure if needed
         public Product? Product { get; set; }
         public int ProductId { get; set;  }
+
         public UserTab ? Tab { get; set; }
         public int TabId { get; set; }
 
