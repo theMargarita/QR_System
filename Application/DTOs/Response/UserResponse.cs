@@ -1,4 +1,4 @@
-﻿namespace Application.DTOs.Response.UserResponse
+﻿namespace Application.DTOs.Response
 {
     public record UserResponse
     {
@@ -7,6 +7,6 @@
         public string LastName { get; set; } = string.Empty;
         public string FullName => $"{FirstName} {LastName}";
         public string? PhoneNumber { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public bool HasPaid { get; set; }
     }
 }
