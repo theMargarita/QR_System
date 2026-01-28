@@ -5,7 +5,8 @@ namespace Domain.IRepositories
     public interface IUserRepository : IRepository<User>
     {
         Task<User?> GetUserByPhoneAsync(string phoneNumber);
-        Task<User?> GetUserByUsernameAsync(string username);
+        Task<User?> GetUserByFirstNameAsync(string firstName);
+        Task<User?> GetUserByLasttNameAsync(string lastName);
         Task<IEnumerable<User>> GetUsersWithTabsAsync();
         Task<IEnumerable<User>> GetUsersWithTabsAndTransactionsAsync();
     }
