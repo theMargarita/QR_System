@@ -6,7 +6,7 @@ namespace Domain.IRepositories
     {
         Task<User?> GetUserByPhoneAsync(string phoneNumber);
         Task<User?> GetUserByFirstNameAsync(string firstName);
-        Task<User?> GetUserByLasttNameAsync(string lastName);
+        Task<User?> GetUserByLastNameAsync(string lastName);
         Task<IEnumerable<User>> GetUsersWithTabsAsync();
         Task<IEnumerable<User>> GetUsersWithTabsAndTransactionsAsync();
     }
