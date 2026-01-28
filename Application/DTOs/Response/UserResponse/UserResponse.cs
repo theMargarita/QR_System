@@ -1,0 +1,12 @@
+﻿namespace Application.DTOs.Response.UserResponse
+{
+    public record UserResponse
+    {
+        public int Id { get; set; }
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
+        public string FullName => $"{FirstName} {LastName}";
+        public string? PhoneNumber { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+    }
+}
