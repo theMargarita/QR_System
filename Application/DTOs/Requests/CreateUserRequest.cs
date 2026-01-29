@@ -15,8 +15,7 @@ namespace Application.DTOs.Requests
         public string FullName => $"{FirstName} {LastName}";
 
         [Phone(ErrorMessage = "Invalid phone number format")]
-        //[RegularExpression(@"^\+?[1-9]\d{1,14}$", ErrorMessage = "Phone number must be in international format")]
         public string? PhoneNumber { get; set; }
-        public DateTimeOffset CreatedAt { get; set; } = new DateTimeOffset(DateTime.UtcNow);
+        public DateTimeOffset CreatedAt { get; set; } = new DateTimeOffset(DateTime.Now);
     }
 }
