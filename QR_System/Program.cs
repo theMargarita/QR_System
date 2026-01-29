@@ -1,6 +1,10 @@
-using Microsoft.EntityFrameworkCore;
-
+using Application.IServices;
+using Application.Services;
+using Domain.IRepoistories;
+using Domain.IRepositories;
 using Infrastructure.Data;
+using Infrastructure.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace QR_System
 {
@@ -10,11 +14,22 @@ namespace QR_System
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            // Logging
+            builder.Services.AddLogging();
 
+            // Repositories
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+            // Services
+            builder.Services.AddScoped<IUserService, UserService>();
+
+            // Controllers
             builder.Services.AddControllers();
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-            builder.Services.AddOpenApi();
+
+            // Swagger / OpenAPI
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
 
             // Database
             builder.Services.AddDbContext<QrDbContext>(options =>
@@ -22,20 +37,18 @@ namespace QR_System
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
+            // Middleware pipeline
             if (app.Environment.IsDevelopment())
             {
-                app.MapOpenApi();
+                app.UseSwagger();
+                app.UseSwaggerUI();
             }
 
             app.UseHttpsRedirection();
-
             app.UseAuthorization();
-
-
             app.MapControllers();
 
-            app.Run();
+            app.Run(); 
         }
     }
 }

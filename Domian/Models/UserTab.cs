@@ -1,4 +1,6 @@
-﻿namespace Domain.Models
+﻿using Domian.Models;
+
+namespace Domain.Models
 {
     public class UserTab
     {

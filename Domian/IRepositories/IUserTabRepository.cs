@@ -2,7 +2,7 @@
 
 namespace Domain.IRepositories
 {
-    public interface ITabRepository : IRepository<UserTab>
+    public interface IUserTabRepository : IRepository<UserTab>
     {
         //find tabs by related data
         Task<UserTab?> GetTabWithDetailsAsync(int id);

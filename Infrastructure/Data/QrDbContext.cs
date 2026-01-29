@@ -1,4 +1,5 @@
 ﻿using Domain.Models;
+using Domian.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data
@@ -11,6 +12,7 @@ namespace Infrastructure.Data
 
         //public DbSet<Role> Roles { get; set; }
         public DbSet<Context> Contexts { get; set; }
+        public DbSet<ContextPart> ContextParts { get; set; }
         public DbSet<Payment> Payments { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Product> Products { get; set; }
@@ -30,6 +32,11 @@ namespace Infrastructure.Data
             }
 
             base.OnModelCreating(modelBuilder);
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            base.OnConfiguring(optionsBuilder);
         }
     }
 }

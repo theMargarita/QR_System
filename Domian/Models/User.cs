@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Text.RegularExpressions;
 
 namespace Domain.Models
 {
@@ -13,8 +12,6 @@ namespace Domain.Models
         [Required]
         public string LastName { get; set; } = string.Empty;
 
-        [Phone]
-        [RegularExpression(@"^\+?[1-9]\d{1,14}$")]
         public string? PhoneNumber { get; set; }
         public DateTime CreatedAt { get; set; } 
 
