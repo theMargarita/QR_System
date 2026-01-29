@@ -1,6 +1,6 @@
 ﻿using Domain.IRepositories;
 
-namespace Domian.IRepoistories
+namespace Domain.IRepoistories
 {
     public interface IUnitOfWork
     {
