@@ -7,10 +7,10 @@ namespace Domain.Models
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty; //ölkyl
 
-        public Owner? Owner { get; set; }
+        public Owner? Owner { get; set; } //DC
         public int? OwnerId { get; set; }
 
-        public bool ContextPartIsUnique { get; set; }
+        public bool ContextPartIsUnique { get; set; } //om true, kan en användare bara vara i en contextpart i taget inom denna context
 
         public ICollection<ContextPart>? Parts { get; set; }
     }

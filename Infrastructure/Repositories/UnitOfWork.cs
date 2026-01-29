@@ -4,7 +4,7 @@ using Infrastructure.Data;
 
 namespace Infrastructure.Repositories
 {
-    public class UnitOfWork : IUnitOfWork, IDisposable
+    public class UnitOfWork : IUnitOfWork
     {
         private readonly QrDbContext _context;
         private readonly IUserRepository _userRepository;
@@ -18,9 +18,9 @@ namespace Infrastructure.Repositories
             _context = context;
         }
 
-        public IUserRepository Users => throw new NotImplementedException();
+        public IUserRepository Users => _userRepository ??= new UserRepository(_context);
 
-        public IContextRepository Contexts => throw new NotImplementedException();
+        public IContextRepository Contexts => _contextRepository ??= new ContextRepository(_context);
 
         public IProductRepository Products => throw new NotImplementedException();
 
@@ -35,7 +35,7 @@ namespace Infrastructure.Repositories
             throw new NotImplementedException();
         }
 
-        //disposable pattern - dispose context - cleanup
+        //disposable pattern - dispose context - cleanup?
         public void Dispose()
         {
             _context.Dispose();
