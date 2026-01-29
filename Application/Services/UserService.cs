@@ -2,9 +2,11 @@
 using Application.DTOs.Response;
 using Application.DTOs.Summary;
 using Application.IServices;
-//using AutoMapper;
+using Domain.IRepoistories;
 using Domain.Models;
-using Domian.IRepoistories;
+
+//using AutoMapper;
+
 using Microsoft.Extensions.Logging;
 
 namespace Application.Services
@@ -23,16 +25,25 @@ namespace Application.Services
 
         public async Task<CreateUserRequest?> CreateUserAsync(CreateUserRequest newUser)
         {
-            //var user = _mapper.Map<User>(newUser);
-            //await _unitOfWork.Users.CreateAsync(user);
+           var user = new User
+           {
+               FirstName = newUser.FirstName,
+               LastName = newUser.LastName,
+               PhoneNumber = newUser.PhoneNumber,
+               CreatedAt = newUser.CreatedAt.UtcDateTime
+           };
 
-            //return _mapper.Map<CreateUserRequest>(user);
-            return  new CreateUserRequest
+            await _unitOfWork.Users.CreateAsync(user);
+            await _unitOfWork.SaveChangesAsync();
+
+            return new CreateUserRequest
             {
-                FirstName = newUser.FirstName,
-                LastName = newUser.LastName,
-                PhoneNumber = newUser.PhoneNumber
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                PhoneNumber = user.PhoneNumber,
+                CreatedAt = user.CreatedAt
             };
+
         }
         public async Task<bool> RemoveUserAsync(int id)
         {
@@ -50,7 +61,7 @@ namespace Application.Services
             //return await _unitOfWork.Users.GetAllAsync();
             //return _mapper.Map<IEnumerable<UserResponse>>(users);
             //return await _unitOfWork.Users.GetAllUsersAsync();
-            return _unitOfWork.Users.FindAsync(u => true).Result
+            var user =  _unitOfWork.Users.FindAsync(u => true).Result
                 .Select(u => new UserResponse
                 {
                     Id = u.Id,
@@ -59,6 +70,9 @@ namespace Application.Services
                     PhoneNumber = u.PhoneNumber,
                     HasPaid = u.Payments != null && u.Payments.Any(p => p.Amount > 0)
                 });
+            await _unitOfWork.Users.GetAllAsync();
+            await _unitOfWork.SaveChangesAsync();
+            return user;
         }
 
         public async Task<UserResponse?> GetUserByNameAsync(string name)
@@ -81,6 +95,8 @@ namespace Application.Services
                     HasPaid = u.Payments != null && u.Payments.Any(p => p.Amount > 0)
                 })
                 .FirstOrDefault();
+            await _unitOfWork.Users.GetAllAsync();
+            await _unitOfWork.SaveChangesAsync();
 
             return user;
         }

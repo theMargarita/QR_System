@@ -11,12 +11,12 @@ namespace Infrastructure.Repositories
         {
         }
 
-        //public async Task<User>? CreateUserAsync(User user)
-        //{
-        //    await _dbSet.AddAsync(user);
-        //    await _context.SaveChangesAsync();
-        //    return user;
-        //}
+        public async Task<User>? CreateUserAsync(User user)
+        {
+            await _dbSet.AddAsync(user);
+            await _context.SaveChangesAsync();
+            return user;
+        }
         public async Task RemoveUserAsync(int id)
         {
             var user = await _dbSet.FindAsync(id);

@@ -1,5 +1,5 @@
-﻿using Domain.IRepositories;
-using Domian.IRepoistories;
+﻿using Domain.IRepoistories;
+using Domain.IRepositories;
 using Infrastructure.Data;
 
 namespace Infrastructure.Repositories
@@ -7,12 +7,12 @@ namespace Infrastructure.Repositories
     public class UnitOfWork : IUnitOfWork
     {
         private readonly QrDbContext _context;
-        private readonly IUserRepository _userRepository;
-        private readonly IContextRepository _contextRepository;
-        private readonly IProductRepository _productRepository;
-        private readonly IUserTabRepository _userTabRepository;
-        private readonly ITransactionRepository _transactionRepository;
-        private readonly IPaymentRepository _paymentRepository;
+        private  IUserRepository _userRepository;
+        private  IContextRepository _contextRepository;
+        private IProductRepository _productRepository;
+        private IUserTabRepository _userTabRepository;
+        private ITransactionRepository _transactionRepository;
+        private  IPaymentRepository _paymentRepository;
         public UnitOfWork(QrDbContext context)
         {
             _context = context;
@@ -20,7 +20,8 @@ namespace Infrastructure.Repositories
 
         public IUserRepository Users => _userRepository ??= new UserRepository(_context);
 
-        public IContextRepository Contexts => _contextRepository ??= new ContextRepository(_context);
+        //these under does not exist yet
+        public IContextRepository Contexts => throw new NotImplementedException(); 
 
         public IProductRepository Products => throw new NotImplementedException();
 
