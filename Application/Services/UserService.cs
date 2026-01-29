@@ -2,6 +2,7 @@
 using Application.DTOs.Response;
 using Application.DTOs.Summary;
 using Application.IServices;
+using AutoMapper;
 using Domain.IRepoistories;
 using Domain.Models;
 
@@ -11,10 +12,11 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Services
 {
+    //DO NOT FORGET SAVECHANGES!
     public class UserService : IUserService
     {
         private readonly IUnitOfWork _unitOfWork;
-        //private readonly IMapper _mapper;
+        private readonly IMapper _mapper;
         private readonly ILogger<UserService> _logger;
         public UserService(IUnitOfWork unitOfWork, ILogger<UserService> logger)
         {
@@ -25,25 +27,30 @@ namespace Application.Services
 
         public async Task<CreateUserRequest?> CreateUserAsync(CreateUserRequest newUser)
         {
-           var user = new User
-           {
-               FirstName = newUser.FirstName,
-               LastName = newUser.LastName,
-               PhoneNumber = newUser.PhoneNumber,
-               CreatedAt = newUser.CreatedAt.UtcDateTime
-           };
+           //var user = new User
+           //{
+           //    FirstName = newUser.FirstName,
+           //    LastName = newUser.LastName,
+           //    PhoneNumber = newUser.PhoneNumber,
+           //    CreatedAt = newUser.CreatedAt.UtcDateTime
+           //};
 
+           // await _unitOfWork.Users.CreateAsync(user);
+           // await _unitOfWork.SaveChangesAsync();
+
+           // return new CreateUserRequest
+           // {
+           //     FirstName = user.FirstName,
+           //     LastName = user.LastName,
+           //     PhoneNumber = user.PhoneNumber,
+           //     CreatedAt = user.CreatedAt
+           // };
+
+            var user = _mapper.Map<User>(newUser);
             await _unitOfWork.Users.CreateAsync(user);
             await _unitOfWork.SaveChangesAsync();
 
-            return new CreateUserRequest
-            {
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                PhoneNumber = user.PhoneNumber,
-                CreatedAt = user.CreatedAt
-            };
-
+            return _mapper.Map<CreateUserRequest>(user);
         }
         public async Task<bool> RemoveUserAsync(int id)
         {
@@ -53,7 +60,24 @@ namespace Application.Services
                 return false;
             }
             await _unitOfWork.Users.DeleteAsync(id);
+            await _unitOfWork.SaveChangesAsync();
             return true;
+        }
+        public async Task<UserResponse> GetUserByIdAsync(int id)
+        {
+            var user = await _unitOfWork.Users.GetByIdAsync(id);
+            if (user == null)
+            {
+                return null;
+            }
+            return new UserResponse
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                PhoneNumber = user.PhoneNumber,
+                HasPaid = user.Payments != null && user.Payments.Any(p => p.Amount > 0)
+            };
         }
 
         public async Task<IEnumerable<UserResponse>> GetAllUsersAsync()

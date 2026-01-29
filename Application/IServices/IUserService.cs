@@ -7,6 +7,7 @@ namespace Application.IServices
     {
         Task<CreateUserRequest?> CreateUserAsync(CreateUserRequest newUser);
         Task<bool> RemoveUserAsync(int id);
+        Task<UserResponse> GetUserByIdAsync(int id);
         Task<UserResponse?> GetUserByPhoneAsync(string phoneNumber);
         Task<UserResponse?> GetUserByNameAsync(string name);
         Task<IEnumerable<UserResponse>> GetAllUsersAsync();
