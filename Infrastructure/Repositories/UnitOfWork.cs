@@ -1,5 +1,4 @@
-﻿using Domain.IRepoistories;
-using Domain.IRepositories;
+﻿using Domain.IRepositories;
 using Infrastructure.Data;
 
 namespace Infrastructure.Repositories
