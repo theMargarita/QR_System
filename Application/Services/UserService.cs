@@ -3,10 +3,10 @@ using Application.DTOs.Response;
 using Application.DTOs.Summary;
 using Application.IServices;
 using AutoMapper;
-using Domain.IRepoistories;
+using Domain.IRepositories;
 using Domain.Models;
-
 //using AutoMapper;
+
 
 using Microsoft.Extensions.Logging;
 
@@ -18,10 +18,10 @@ namespace Application.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly ILogger<UserService> _logger;
-        public UserService(IUnitOfWork unitOfWork, ILogger<UserService> logger)
+        public UserService(IUnitOfWork unitOfWork, ILogger<UserService> logger, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
-            //_mapper = mapper;
+            _mapper = mapper;
             _logger = logger;
         }
 
