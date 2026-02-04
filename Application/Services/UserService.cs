@@ -2,10 +2,8 @@
 using Application.DTOs.Response;
 using Application.DTOs.Summary;
 using Application.IServices;
-using AutoMapper;
 using Domain.IRepositories;
 using Domain.Models;
-using AutoMapper;
 
 
 using Microsoft.Extensions.Logging;
@@ -16,41 +14,43 @@ namespace Application.Services
     public class UserService : IUserService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
+        //private readonly IMapper _mapper;
         private readonly ILogger<UserService> _logger;
-        public UserService(IUnitOfWork unitOfWork, ILogger<UserService> logger, IMapper mapper)
+        public UserService(IUnitOfWork unitOfWork, ILogger<UserService> logger)
         {
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
+            //_mapper = mapper;
             _logger = logger;
         }
 
         public async Task<CreateUserRequest?> CreateUserAsync(CreateUserRequest newUser)
         {
-           //var user = new User
-           //{
-           //    FirstName = newUser.FirstName,
-           //    LastName = newUser.LastName,
-           //    PhoneNumber = newUser.PhoneNumber,
-           //    CreatedAt = newUser.CreatedAt.UtcDateTime
-           //};
+            var user = new User
+            {
+                FirstName = newUser.FirstName,
+                LastName = newUser.LastName,
+                PhoneNumber = newUser.PhoneNumber,
+                CreatedAt = newUser.CreatedAt.UtcDateTime
+            };
 
-           // await _unitOfWork.Users.CreateAsync(user);
-           // await _unitOfWork.SaveChangesAsync();
-
-           // return new CreateUserRequest
-           // {
-           //     FirstName = user.FirstName,
-           //     LastName = user.LastName,
-           //     PhoneNumber = user.PhoneNumber,
-           //     CreatedAt = user.CreatedAt
-           // };
-
-            var user = _mapper.Map<User>(newUser);
             await _unitOfWork.Users.CreateAsync(user);
             await _unitOfWork.SaveChangesAsync();
 
-            return _mapper.Map<CreateUserRequest>(user);
+            _logger.LogInformation("Created new user with ID {UserId}", user.Id);
+
+            return new CreateUserRequest
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                PhoneNumber = user.PhoneNumber,
+                CreatedAt = user.CreatedAt
+            };
+
+            //var user = _mapper.Map<User>(newUser);
+            //await _unitOfWork.Users.CreateAsync(user);
+            //await _unitOfWork.SaveChangesAsync();
+
+            //return _mapper.Map<CreateUserRequest>(user);
         }
         public async Task<bool> RemoveUserAsync(int id)
         {
