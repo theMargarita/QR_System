@@ -45,6 +45,7 @@ namespace QR_System.Controllers
             return Ok(user);
         }
 
+        //this endpoint does not work anymore - good to know
         [HttpGet("name/{name}")]
         public async Task<IActionResult> GetUserByName(string name)
         {
