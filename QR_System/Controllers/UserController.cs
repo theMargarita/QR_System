@@ -16,7 +16,7 @@ namespace QR_System.Controllers
         }
 
         [HttpGet("id/{id}")]
-        public async Task<IActionResult> GetUser(int id)
+        public async Task<IActionResult> GetUser(Guid id)
         {
             var user = await _userService.GetUserByIdAsync(id);
             if (user == null)
@@ -74,7 +74,7 @@ namespace QR_System.Controllers
         [HttpDelete]
         [ProducesResponseType(typeof(CreateUserRequest), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> DeleteUser(int id)
+        public async Task<IActionResult> DeleteUser(Guid id)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
