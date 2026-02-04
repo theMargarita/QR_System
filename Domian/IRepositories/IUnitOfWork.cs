@@ -8,7 +8,7 @@
         IUserTabRepository UserTabs { get; }
         ITransactionRepository Transactions { get; }
         IPaymentRepository Payments { get; }
-        Task<int> CompleteAsync();
         Task<int> SaveChangesAsync();
+        void Dispose();
     }
 }
