@@ -1,6 +1,4 @@
-﻿using Domain.IRepositories;
-
-namespace Domain.IRepoistories
+﻿namespace Domain.IRepositories
 {
     public interface IUnitOfWork
     {
@@ -10,7 +8,7 @@ namespace Domain.IRepoistories
         IUserTabRepository UserTabs { get; }
         ITransactionRepository Transactions { get; }
         IPaymentRepository Payments { get; }
-        Task<int> CompleteAsync();
         Task<int> SaveChangesAsync();
+        void Dispose();
     }
 }

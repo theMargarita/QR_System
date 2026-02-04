@@ -13,16 +13,13 @@ namespace Domain.Models
         public string LastName { get; set; } = string.Empty;
 
         public string? PhoneNumber { get; set; }
+        //public int TaleId { get; set; } //ContextPart?
         public DateTime CreatedAt { get; set; } 
 
-        //navigatio propery
-        public ICollection<UserTab>? Tabs { get; set; }
-        public ICollection<Transaction>? Transactions { get; set; }
-        public ICollection<Payment>? Payments { get; set; }
-
-
-        //string pattern = @"^([\+]?61[-]?|0)?[1-9][0-9]{8}$";   // AU example
-        //bool ok = Regex.IsMatch(input, pattern, RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        //navigatio propery - many to many
+        public ICollection<UserTab>? Tabs { get; set; } // är användar nota ? 
+        public ICollection<Transaction>? Transactions { get; set; } //
+        public ICollection<Payment>? Payments { get; set; } //hur det betalas
 
         //+46708562851
         //+46 70 856 28 51

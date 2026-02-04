@@ -2,7 +2,7 @@
 
 namespace Domain.Models
 {
-    public class UserTab
+    public class UserTab //användar nota
     {
         public int Id { get; set; }
         public int UserId { get; set; }

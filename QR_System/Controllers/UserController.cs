@@ -1,7 +1,5 @@
 ﻿using Application.DTOs.Requests;
-using Application.DTOs.Response;
 using Application.IServices;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace QR_System.Controllers
@@ -17,16 +15,16 @@ namespace QR_System.Controllers
             _userService = userService;
         }
 
-        //[HttpGet ("id/{id}")]
-        //public async Task<IActionResult> GetUser(int id)
-        //{
-        //    var user = await _userService.GetUserByIdAsync(id);
-        //    if (user == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    return Ok(user);
-        //}
+        [HttpGet("id/{id}")]
+        public async Task<IActionResult> GetUser(int id)
+        {
+            var user = await _userService.GetUserByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return Ok(user);
+        }
 
         [HttpGet("GetUser")]
         //[Authorize(Roles = "Admin")]
@@ -47,6 +45,7 @@ namespace QR_System.Controllers
             return Ok(user);
         }
 
+        //this endpoint does not work anymore - good to know
         [HttpGet("name/{name}")]
         public async Task<IActionResult> GetUserByName(string name)
         {
@@ -59,7 +58,7 @@ namespace QR_System.Controllers
         }
 
         //this one works now as it should
-        [HttpPost]
+        [HttpPost ("CreateUser")]
         [ProducesResponseType(typeof(CreateUserRequest), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
 

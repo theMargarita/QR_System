@@ -1,5 +1,4 @@
-﻿using Domain.IRepoistories;
-using Domain.IRepositories;
+﻿using Domain.IRepositories;
 using Infrastructure.Data;
 
 namespace Infrastructure.Repositories
@@ -21,7 +20,7 @@ namespace Infrastructure.Repositories
         public IUserRepository Users => _userRepository ??= new UserRepository(_context);
 
         //these under does not exist yet
-        public IContextRepository Contexts => throw new NotImplementedException(); 
+        public IContextRepository Contexts => _contextRepository ??= new ContextRepository(_context);
 
         public IProductRepository Products => throw new NotImplementedException();
 
@@ -31,11 +30,7 @@ namespace Infrastructure.Repositories
 
         public IPaymentRepository Payments => throw new NotImplementedException();
 
-        public Task<int> CompleteAsync()
-        {
-            throw new NotImplementedException();
-        }
-
+     
         //disposable pattern - dispose context - cleanup?
         public void Dispose()
         {
