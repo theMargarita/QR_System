@@ -52,7 +52,7 @@ namespace Application.Services
 
             //return _mapper.Map<CreateUserRequest>(user);
         }
-        public async Task<bool> RemoveUserAsync(int id)
+        public async Task<bool> RemoveUserAsync(Guid id)
         {
             var user = _unitOfWork.Users.GetByIdAsync(id);
             if (user == null)
@@ -63,7 +63,7 @@ namespace Application.Services
             await _unitOfWork.SaveChangesAsync();
             return true;
         }
-        public async Task<UserResponse> GetUserByIdAsync(int id)
+        public async Task<UserResponse> GetUserByIdAsync(Guid id)
         {
             var user = await _unitOfWork.Users.GetByIdAsync(id);
             if (user == null)
@@ -148,7 +148,7 @@ namespace Application.Services
         }
 
         //maybe should also have showUSerProfile? 
-        public async Task<UserProfileResponse?> GetUserProfileAsync(int userId)
+        public async Task<UserProfileResponse?> GetUserProfileAsync(Guid userId)
         {
             //var user = await _unitOfWork.Users.GetUserProfileAsync(userId);
             //if (user == null)
@@ -222,5 +222,6 @@ namespace Application.Services
                 HasPaid = u.Payments != null && u.Payments
                 .Any(p => p.Amount > 0) });
         }
+       
     }
 }
