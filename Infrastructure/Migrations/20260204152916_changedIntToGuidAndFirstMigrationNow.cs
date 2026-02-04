@@ -4,18 +4,19 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class init10 : Migration
+    public partial class changedIntToGuidAndFirstMigrationNow : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AlterDatabase()
+                .Annotation("Npgsql:PostgresExtension:uuid-ossp", ",,");
+
             migrationBuilder.CreateTable(
-                name: "Owner",
+                name: "owner",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -24,11 +25,11 @@ namespace Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Owner", x => x.Id);
+                    table.PrimaryKey("PK_owner", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Products",
+                name: "products",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -42,69 +43,70 @@ namespace Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Products", x => x.Id);
+                    table.PrimaryKey("PK_products", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Users",
+                name: "users",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     FirstName = table.Column<string>(type: "text", nullable: false),
                     LastName = table.Column<string>(type: "text", nullable: false),
                     PhoneNumber = table.Column<string>(type: "text", nullable: true),
-                    TaleId = table.Column<int>(type: "integer", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.Id);
+                    table.PrimaryKey("PK_users", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Contexts",
+                name: "contexts",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: false),
+                    QrToken = table.Column<string>(type: "text", nullable: true),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
                     OwnerId = table.Column<int>(type: "integer", nullable: true),
                     ContextPartIsUnique = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Contexts", x => x.Id);
+                    table.PrimaryKey("PK_contexts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Contexts_Owner_OwnerId",
+                        name: "FK_contexts_owner_OwnerId",
                         column: x => x.OwnerId,
-                        principalTable: "Owner",
+                        principalTable: "owner",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "ContextParts",
+                name: "contextparts",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: false),
+                    QrToken = table.Column<string>(type: "text", nullable: false),
                     ContextId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ContextParts", x => x.Id);
+                    table.PrimaryKey("PK_contextparts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ContextParts_Contexts_ContextId",
+                        name: "FK_contextparts_contexts_ContextId",
                         column: x => x.ContextId,
-                        principalTable: "Contexts",
+                        principalTable: "contexts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserTabs",
+                name: "usertabs",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -115,27 +117,28 @@ namespace Infrastructure.Migrations
                     ClosedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
                     OwnerId = table.Column<int>(type: "integer", nullable: true),
-                    ContextPartId = table.Column<int>(type: "integer", nullable: true)
+                    ContextPartId = table.Column<int>(type: "integer", nullable: true),
+                    UserId1 = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserTabs", x => x.Id);
+                    table.PrimaryKey("PK_usertabs", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserTabs_ContextParts_ContextPartId",
+                        name: "FK_usertabs_contextparts_ContextPartId",
                         column: x => x.ContextPartId,
-                        principalTable: "ContextParts",
+                        principalTable: "contextparts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_UserTabs_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
+                        name: "FK_usertabs_users_UserId1",
+                        column: x => x.UserId1,
+                        principalTable: "users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Payments",
+                name: "payments",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -145,27 +148,28 @@ namespace Infrastructure.Migrations
                     Method = table.Column<int>(type: "integer", nullable: false),
                     Note = table.Column<string>(type: "text", nullable: true),
                     TabId = table.Column<int>(type: "integer", nullable: true),
+                    UserId1 = table.Column<Guid>(type: "uuid", nullable: true),
                     UserId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Payments", x => x.Id);
+                    table.PrimaryKey("PK_payments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Payments_UserTabs_TabId",
-                        column: x => x.TabId,
-                        principalTable: "UserTabs",
+                        name: "FK_payments_users_UserId1",
+                        column: x => x.UserId1,
+                        principalTable: "users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Payments_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
+                        name: "FK_payments_usertabs_TabId",
+                        column: x => x.TabId,
+                        principalTable: "usertabs",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Transactions",
+                name: "transactions",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -175,146 +179,104 @@ namespace Infrastructure.Migrations
                     CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     ProductId = table.Column<int>(type: "integer", nullable: false),
                     TabId = table.Column<int>(type: "integer", nullable: false),
+                    UserId1 = table.Column<Guid>(type: "uuid", nullable: true),
                     UserId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Transactions", x => x.Id);
+                    table.PrimaryKey("PK_transactions", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Transactions_Products_ProductId",
+                        name: "FK_transactions_products_ProductId",
                         column: x => x.ProductId,
-                        principalTable: "Products",
+                        principalTable: "products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Transactions_UserTabs_TabId",
+                        name: "FK_transactions_users_UserId1",
+                        column: x => x.UserId1,
+                        principalTable: "users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_transactions_usertabs_TabId",
                         column: x => x.TabId,
-                        principalTable: "UserTabs",
+                        principalTable: "usertabs",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Transactions_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.InsertData(
-                table: "ContextParts",
-                columns: new[] { "Id", "ContextId", "Name" },
-                values: new object[,]
-                {
-                    { 1, null, "Bord 1" },
-                    { 2, null, "Bord 2" },
-                    { 3, null, "Bord 3" },
-                    { 4, null, "Bord 4" },
-                    { 5, null, "Bord 5" },
-                    { 6, null, "Bord 6" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Owner",
-                columns: new[] { "Id", "Name" },
-                values: new object[] { 1, "Digital Creation" });
-
-            migrationBuilder.InsertData(
-                table: "Products",
-                columns: new[] { "Id", "Category", "Description", "ImageUrl", "Name", "Price", "Status" },
-                values: new object[,]
-                {
-                    { 1, null, "", "", "Coca Cola", 25.0m, 0 },
-                    { 2, null, "", "", "Öl", 20.0m, 0 },
-                    { 3, null, "", "", "Röd vin", 22.0m, 0 },
-                    { 4, null, "", "", "Sprite", 18.0m, 0 },
-                    { 5, null, "", "", "Water", 10.0m, 0 },
-                    { 6, null, "", "", "Pizza", 30.0m, 0 },
-                    { 7, null, "", "", "Pasta", 28.0m, 0 },
-                    { 8, null, "", "", "Salad", 15.0m, 0 }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Contexts",
-                columns: new[] { "Id", "ContextPartIsUnique", "Name", "OwnerId" },
-                values: new object[,]
-                {
-                    { 1, true, "Ölkyl", 1 },
-                    { 2, true, "Bar", 1 },
-                    { 3, true, "Restaurang", 1 }
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_ContextParts_ContextId",
-                table: "ContextParts",
+                name: "IX_contextparts_ContextId",
+                table: "contextparts",
                 column: "ContextId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Contexts_OwnerId",
-                table: "Contexts",
+                name: "IX_contexts_OwnerId",
+                table: "contexts",
                 column: "OwnerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Payments_TabId",
-                table: "Payments",
+                name: "IX_payments_TabId",
+                table: "payments",
                 column: "TabId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Payments_UserId",
-                table: "Payments",
-                column: "UserId");
+                name: "IX_payments_UserId1",
+                table: "payments",
+                column: "UserId1");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Transactions_ProductId",
-                table: "Transactions",
+                name: "IX_transactions_ProductId",
+                table: "transactions",
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Transactions_TabId",
-                table: "Transactions",
+                name: "IX_transactions_TabId",
+                table: "transactions",
                 column: "TabId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Transactions_UserId",
-                table: "Transactions",
-                column: "UserId");
+                name: "IX_transactions_UserId1",
+                table: "transactions",
+                column: "UserId1");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserTabs_ContextPartId",
-                table: "UserTabs",
+                name: "IX_usertabs_ContextPartId",
+                table: "usertabs",
                 column: "ContextPartId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserTabs_UserId",
-                table: "UserTabs",
-                column: "UserId");
+                name: "IX_usertabs_UserId1",
+                table: "usertabs",
+                column: "UserId1");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Payments");
+                name: "payments");
 
             migrationBuilder.DropTable(
-                name: "Transactions");
+                name: "transactions");
 
             migrationBuilder.DropTable(
-                name: "Products");
+                name: "products");
 
             migrationBuilder.DropTable(
-                name: "UserTabs");
+                name: "usertabs");
 
             migrationBuilder.DropTable(
-                name: "ContextParts");
+                name: "contextparts");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "users");
 
             migrationBuilder.DropTable(
-                name: "Contexts");
+                name: "contexts");
 
             migrationBuilder.DropTable(
-                name: "Owner");
+                name: "owner");
         }
     }
 }
