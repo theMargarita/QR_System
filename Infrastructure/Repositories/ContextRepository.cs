@@ -11,6 +11,20 @@ namespace Infrastructure.Repositories
         {
         }
 
+        //tror helt ärligt inte att denna behövs
+        public async Task<Context?> CreateContextAsync(Context context)
+        {
+            return await CreateAsync(context);
+        }
+
+        public async Task<List<Context>> GetActiveAsync()
+        {
+            //behöver man skriva equals true eller förstår den ändå
+            var active =  _dbSet.Where(c => c.IsActive);
+
+            return await active.ToListAsync();
+        }
+
         // Get Context by QrCodeToken - not sure about this one
         public async Task<Context?> GetByQrCodeTokenAsync(string qrCodeToken)
         {
@@ -38,6 +52,11 @@ namespace Infrastructure.Repositories
         public async Task<bool> IsQrCodeTokenUniqueAsync(string qrCodeToken)
         {
             return !await _dbSet.AnyAsync(c => c.QrToken == qrCodeToken);
+        }
+
+        public async Task<bool> QRTokenExistsAsync(string qrToken)
+        {
+            return await _dbSet.AnyAsync(c => c.QrToken == qrToken);
         }
     }
 }
