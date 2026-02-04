@@ -5,15 +5,17 @@ namespace Domain.IRepositories
     public interface IContextPartRepository
     {
         //is this really nessary when there is unit of work?
-        Task<ContextPart> CreateAsync(ContextPart contextPart);
+        Task<ContextPart> CreateContextPartAsync(ContextPart contextPart);
         Task<ContextPart> GetByIdAsync(int contextPartId);
-        Task<ContextPart> GetActiveAsync(int userId, int tabId);
-        Task<List<ContextPart>> GetByTabIdAsync(int tabId);
-        Task<List<ContextPart>> GetActiveByTabIdAsync(int tabId);
-        Task<List<ContextPart>> GetByUserIdAsync(int userId);
+        //active tables 
+        Task<ContextPart> GetActivePartAsync(int userId, int tabId);
+        Task<bool> QRTokenExistsAsync(string qrToken);
+
+        //Do i need this? maybe not
+        //Task<List<ContextPart>> GetByTabIdAsync(int tabId);
         ContextPart Update(ContextPart contextPart);
-        void Delete(ContextPart contextPart);
         Task<bool> ExistsAsync(int userId, int tabId);
-        Task<int> CountActiveByTabIdAsync(int tabId);
+        //might need to change this to count how many user is active on a specific table
+        Task<int> AmoutOfUserOnAPartAsync();
     }
 }

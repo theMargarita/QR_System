@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(QrDbContext))]
-    [Migration("20260204125936_removedTableId")]
-    partial class removedTableId
+    [Migration("20260204152916_changedIntToGuidAndFirstMigrationNow")]
+    partial class changedIntToGuidAndFirstMigrationNow
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -55,32 +55,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("OwnerId");
 
                     b.ToTable("contexts");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            ContextPartIsUnique = true,
-                            IsActive = false,
-                            Name = "Ölkyl",
-                            OwnerId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            ContextPartIsUnique = true,
-                            IsActive = false,
-                            Name = "Bar",
-                            OwnerId = 1
-                        },
-                        new
-                        {
-                            Id = 3,
-                            ContextPartIsUnique = true,
-                            IsActive = false,
-                            Name = "Restaurang",
-                            OwnerId = 1
-                        });
                 });
 
             modelBuilder.Entity("Domain.Models.Owner", b =>
@@ -98,13 +72,6 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("owner");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Digital Creation"
-                        });
                 });
 
             modelBuilder.Entity("Domain.Models.Payment", b =>
@@ -133,11 +100,14 @@ namespace Infrastructure.Migrations
                     b.Property<int?>("UserId")
                         .HasColumnType("integer");
 
+                    b.Property<Guid?>("UserId1")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
                     b.HasIndex("TabId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId1");
 
                     b.ToTable("payments");
                 });
@@ -175,80 +145,6 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("products");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Description = "",
-                            ImageUrl = "",
-                            Name = "Coca Cola",
-                            Price = 25.0m,
-                            Status = 0
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Description = "",
-                            ImageUrl = "",
-                            Name = "Öl",
-                            Price = 20.0m,
-                            Status = 0
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Description = "",
-                            ImageUrl = "",
-                            Name = "Röd vin",
-                            Price = 22.0m,
-                            Status = 0
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Description = "",
-                            ImageUrl = "",
-                            Name = "Sprite",
-                            Price = 18.0m,
-                            Status = 0
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Description = "",
-                            ImageUrl = "",
-                            Name = "Water",
-                            Price = 10.0m,
-                            Status = 0
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Description = "",
-                            ImageUrl = "",
-                            Name = "Pizza",
-                            Price = 30.0m,
-                            Status = 0
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Description = "",
-                            ImageUrl = "",
-                            Name = "Pasta",
-                            Price = 28.0m,
-                            Status = 0
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Description = "",
-                            ImageUrl = "",
-                            Name = "Salad",
-                            Price = 15.0m,
-                            Status = 0
-                        });
                 });
 
             modelBuilder.Entity("Domain.Models.Transaction", b =>
@@ -277,24 +173,25 @@ namespace Infrastructure.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
 
+                    b.Property<Guid?>("UserId1")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ProductId");
 
                     b.HasIndex("TabId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId1");
 
                     b.ToTable("transactions");
                 });
 
             modelBuilder.Entity("Domain.Models.User", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -344,11 +241,14 @@ namespace Infrastructure.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
 
+                    b.Property<Guid?>("UserId1")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ContextPartId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId1");
 
                     b.ToTable("usertabs");
                 });
@@ -368,43 +268,15 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("QrToken")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ContextId");
 
                     b.ToTable("contextparts");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Bord 1"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Bord 2"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Bord 3"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Name = "Bord 4"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Name = "Bord 5"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Name = "Bord 6"
-                        });
                 });
 
             modelBuilder.Entity("Domain.Models.Context", b =>
@@ -426,7 +298,7 @@ namespace Infrastructure.Migrations
 
                     b.HasOne("Domain.Models.User", "User")
                         .WithMany("Payments")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("UserId1")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Tab");
@@ -450,9 +322,8 @@ namespace Infrastructure.Migrations
 
                     b.HasOne("Domain.Models.User", "User")
                         .WithMany("Transactions")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .HasForeignKey("UserId1")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Product");
 
@@ -470,9 +341,8 @@ namespace Infrastructure.Migrations
 
                     b.HasOne("Domain.Models.User", "User")
                         .WithMany("Tabs")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .HasForeignKey("UserId1")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("ContextPart");
 

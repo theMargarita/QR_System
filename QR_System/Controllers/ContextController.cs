@@ -42,6 +42,8 @@ namespace QR_System.Controllers
             });
         }
 
+
+        //not sure about this one
         [HttpGet("viewQr/{contextId}")]
         public async Task<ContentResult> ViewQR(int contextId)
         {
@@ -91,50 +93,39 @@ namespace QR_System.Controllers
             return File(qrBytes, "image/png", $"QR_{context.Name}.png");
         }
 
-        //QR PART HERE IN CONTEXT CONTROLLER
+       
+        //[HttpGet("scan/{qrToken}")]
+        //public async Task<ActionResult> ScanQR(string qrToken)
+        //{
+        //    var context = await _contextService.GetContextPartByQrTokenAsync(qrToken);
 
-        [HttpGet("scan/{qrToken}")]
-        public async Task<ActionResult> ScanQR(string qrToken)
-        {
-            var context = await _contextService.GetContextPartByQrTokenAsync(qrToken);
+        //    if (context == null)
+        //    {
+        //        return NotFound("Context part not found for the provided QR token.");
+        //    }
 
-            if (context == null)
-            {
-                return NotFound("Context part not found for the provided QR token.");
-            }
+        //    return Ok(
+        //        new
+        //        {
+        //            ContextId = context.Id,
+        //            ContextName = context.Name,
+        //            ContextPartIsUnique = context.ContextPartIsUnique,
+        //            ContextPartsid = context.ContextPartsid,
+        //            PartName = context.PartName
+        //        }
+        //    );
+        //}
 
-            return Ok(
-                new
-                {
-                    ContextId = context.Id,
-                    ContextName = context.Name,
-                    ContextPartIsUnique = context.ContextPartIsUnique,
-                    ContextPartsid = context.ContextPartsid,
-                    PartName = context.PartName
-                }
-            );
-        }
+        //[HttpGet("generateQr/{qrText}")]
+        ////[ProducesResponseType(typeof(CreateUserRequest), StatusCodes.Status201Created)]
+        //[ProducesResponseType(StatusCodes.Status201Created)]
 
-        [HttpGet("generateQr/{qrText}")]
-        //[ProducesResponseType(typeof(CreateUserRequest), StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult GenerateQrCode(string qrText)
-        {
-            var qrBytes = _qrCodeService.GenerateQrCode(qrText);
-            return File(qrBytes, "image/png");
-        }
-
-        [HttpGet("generateUniqueQrBase64/{qrText}")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult GenerateUniqueQrCodeBase64(string qrText)
-        {
-            var qrBase64 = _qrCodeService.GenerateQrCodeBase64(qrText);
-            return Ok(qrBase64);
-        }
-
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //public IActionResult GenerateQrCode(string qrText)
+        //{
+        //    var qrBytes = _qrCodeService.GenerateQrCode(qrText);
+        //    return File(qrBytes, "image/png");
+        //}
     }
 }
 

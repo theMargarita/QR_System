@@ -8,7 +8,7 @@ namespace Domain.IRepositories
         Task<User?> GetUserByNameAsync(string name);
         Task<IEnumerable<User>> GetUsersWithTabsAsync();
         Task<IEnumerable<User>> GetUsersWithTransactionsAsync();
-        Task<User>GetUserProfileAsync(int userId);
+        Task<User>GetUserProfileAsync(Guid userId);
         Task<IEnumerable<User>> SearchUsersAsync(string searchTerm);
     }
 }

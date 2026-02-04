@@ -8,7 +8,7 @@ namespace Application.DTOs.Requests
         public string Name { get; init; } = string.Empty;
         public int ContextId { get; init; } // which context (bord) this part belongs to
         public int TabId { get; set; }
-        public int UserId { get; set; }
+        public Guid UserId { get; set; }
 
         //these can stay here incase 
         public DateTime JoinedAt { get; set; }

@@ -6,7 +6,7 @@ namespace Domian.Models
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty; //bord 11
-
+        public string QrToken { get; set; }
         public Context? Context { get; set; }
 
         public ICollection<UserTab>? UserTabs { get; set; } //användare som är i denna contextpart

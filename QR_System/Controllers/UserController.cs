@@ -15,16 +15,7 @@ namespace QR_System.Controllers
             _userService = userService;
         }
 
-        [HttpGet("id/{id}")]
-        public async Task<IActionResult> GetUser(int id)
-        {
-            var user = await _userService.GetUserByIdAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-            return Ok(user);
-        }
+        //kan alltid lägga till GetById senar om det behövs
 
         [HttpGet("GetUser")]
         //[Authorize(Roles = "Admin")]
@@ -45,7 +36,7 @@ namespace QR_System.Controllers
             return Ok(user);
         }
 
-        //this endpoint does not work anymore - good to know
+        //denna funkar men den är case sensitive 
         [HttpGet("name/{name}")]
         public async Task<IActionResult> GetUserByName(string name)
         {
@@ -74,7 +65,7 @@ namespace QR_System.Controllers
         [HttpDelete]
         [ProducesResponseType(typeof(CreateUserRequest), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> DeleteUser(int id)
+        public async Task<IActionResult> DeleteUser(Guid id)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 

@@ -21,7 +21,7 @@ namespace Infrastructure.Repositories
             return entity;
         }
 
-        public virtual async Task DeleteAsync(int id)
+        public virtual async Task DeleteAsync(object id)
         {
             var foundId = await _dbSet.FindAsync(id); 
             if (foundId != null)
@@ -30,7 +30,7 @@ namespace Infrastructure.Repositories
             }
         }
 
-        public virtual async Task<bool> DeleteBoolAsync(int id)
+        public virtual async Task<bool> DeleteBoolAsync(object id)
         {
             var findId = await _dbSet.FindAsync(id);
             if(findId != null)
@@ -41,7 +41,7 @@ namespace Infrastructure.Repositories
             return false;
         }
 
-        public async Task<bool> ExistsAsync(int id)
+        public async Task<bool> ExistsAsync(object id)
         {
             return await _dbSet.FindAsync(id) != null;
         }
@@ -56,7 +56,7 @@ namespace Infrastructure.Repositories
             return await _dbSet.ToListAsync();
         }
 
-        public async Task<T?> GetByIdAsync(int id)
+        public async Task<T?> GetByIdAsync(object id)
         {
             return await _dbSet.FindAsync(id);
         }
