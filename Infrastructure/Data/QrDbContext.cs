@@ -50,6 +50,7 @@ namespace Infrastructure.Data
 
         }
 
+        //guid id
         private void SeedData(ModelBuilder modelBuilder)
         {
             //CONTEXTPARTS

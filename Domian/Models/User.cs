@@ -13,7 +13,7 @@ namespace Domain.Models
         public string LastName { get; set; } = string.Empty;
 
         public string? PhoneNumber { get; set; }
-        public int TaleId { get; set; } //ContextPart?
+        //public int TaleId { get; set; } //ContextPart?
         public DateTime CreatedAt { get; set; } 
 
         //navigatio propery - many to many

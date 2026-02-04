@@ -7,7 +7,7 @@ namespace Domain.Models
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty; //ölkyl
         public string? QrToken { get; set; }
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; } //om false, är context inaktiv och kan inte användas för då använder någon den förmodar jag 
 
         public Owner? Owner { get; set; } //DC
         public int? OwnerId { get; set; }
