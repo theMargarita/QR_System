@@ -8,6 +8,7 @@ namespace Infrastructure.Repositories
         private readonly QrDbContext _context;
         private  IUserRepository _userRepository;
         private  IContextRepository _contextRepository;
+        private IContextPartRepository _contextPartRepository;
         private IProductRepository _productRepository;
         private IUserTabRepository _userTabRepository;
         private ITransactionRepository _transactionRepository;
@@ -21,6 +22,7 @@ namespace Infrastructure.Repositories
 
         //these under does not exist yet
         public IContextRepository Contexts => _contextRepository ??= new ContextRepository(_context);
+        public IContextPartRepository ContextParts => _contextPartRepository ??= new ContextPartRepository(_context);
 
         public IProductRepository Products => throw new NotImplementedException();
 

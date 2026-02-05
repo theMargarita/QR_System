@@ -1,6 +1,6 @@
-﻿using Application.DTOs.Requests;
-using Application.DTOs.Response;
-using Application.DTOs.Summary;
+﻿using Application.DTOs.UserFolder.Request;
+using Application.DTOs.UserFolder.Response;
+using Application.DTOs.UserTabFolder;
 using Application.IServices;
 using Domain.IRepositories;
 using Domain.Models;
@@ -14,12 +14,10 @@ namespace Application.Services
     public class UserService : IUserService
     {
         private readonly IUnitOfWork _unitOfWork;
-        //private readonly IMapper _mapper;
         private readonly ILogger<UserService> _logger;
         public UserService(IUnitOfWork unitOfWork, ILogger<UserService> logger)
         {
             _unitOfWork = unitOfWork;
-            //_mapper = mapper;
             _logger = logger;
         }
 
@@ -45,12 +43,6 @@ namespace Application.Services
                 PhoneNumber = user.PhoneNumber,
                 CreatedAt = user.CreatedAt
             };
-
-            //var user = _mapper.Map<User>(newUser);
-            //await _unitOfWork.Users.CreateAsync(user);
-            //await _unitOfWork.SaveChangesAsync();
-
-            //return _mapper.Map<CreateUserRequest>(user);
         }
         public async Task<bool> RemoveUserAsync(Guid id)
         {
@@ -82,9 +74,6 @@ namespace Application.Services
 
         public async Task<IEnumerable<UserResponse>> GetAllUsersAsync()
         {
-            //return await _unitOfWork.Users.GetAllAsync();
-            //return _mapper.Map<IEnumerable<UserResponse>>(users);
-            //return await _unitOfWork.Users.GetAllUsersAsync();
             var user =  _unitOfWork.Users.FindAsync(u => true).Result
                 .Select(u => new UserResponse
                 {
@@ -101,14 +90,6 @@ namespace Application.Services
 
         public async Task<UserResponse?> GetUserByNameAsync(string name)
         {
-            //var user = await _unitOfWork.Users.GetUserByNameAsync(name);
-            //if(user == null)
-            //{
-            //    return null;
-            //}
-
-            //return _mapper.Map<UserResponse>(user);
-
             var user = _unitOfWork.Users.FindAsync(u => u.FirstName == name || u.LastName == name).Result
                 .Select(u => new UserResponse
                 {
@@ -127,14 +108,6 @@ namespace Application.Services
 
         public async Task<UserResponse?> GetUserByPhoneAsync(string phoneNumber)
         {
-            //var user = await _unitOfWork.Users.GetUserByPhoneAsync(phoneNumber);
-            //if (user == null)
-            //{
-            //    return null;
-            //}
-
-            //return _mapper.Map<UserResponse>(user);
-
             return _unitOfWork.Users.FindAsync(u => u.PhoneNumber == phoneNumber).Result
                 .Select(u => new UserResponse
                 {
@@ -150,13 +123,6 @@ namespace Application.Services
         //maybe should also have showUSerProfile? 
         public async Task<UserProfileResponse?> GetUserProfileAsync(Guid userId)
         {
-            //var user = await _unitOfWork.Users.GetUserProfileAsync(userId);
-            //if (user == null)
-            //{
-            //    return null;
-            //}
-            //return _mapper.Map<UserProfileResponse>(user);
-
             var user = await _unitOfWork.Users.GetByIdAsync(userId);
             if (user == null)
             {
@@ -180,9 +146,6 @@ namespace Application.Services
         }
         public async Task<IEnumerable<UserResponse>> GetUsersWithTabsAsync()
         {
-            //var users = await _unitOfWork.Users.GetUsersWithTabsAsync();
-            //return _mapper.Map<IEnumerable<UserResponse>>(users);
-
             var users = await _unitOfWork.Users.GetUsersWithTabsAsync();
             return users.Select(u => new UserResponse
             {
@@ -196,9 +159,6 @@ namespace Application.Services
 
         public async Task<IEnumerable<UserResponse>> GetUsersWithTransactionsAsync()
         {
-            //var users = await _unitOfWork.Users.GetUsersWithTransactionsAsync();
-            //return _mapper.Map<IEnumerable<UserResponse>>(users);
-
             var users = await _unitOfWork.Users.GetUsersWithTransactionsAsync();
             return users.Select(u => new UserResponse
             {

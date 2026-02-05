@@ -32,13 +32,14 @@ namespace QR_System
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+
+        
+
             // Database
             //builder.Services.AddDbContext<QrDbContext>(options =>
             //    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
             builder.Services.AddDbContext<QrDbContext>(options =>
                 options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-            //builder.Services.AddAutoMapper(typeof(Program));
 
             var app = builder.Build();
 

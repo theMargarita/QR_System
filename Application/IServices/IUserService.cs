@@ -1,5 +1,5 @@
-﻿using Application.DTOs.Requests;
-using Application.DTOs.Response;
+﻿using Application.DTOs.UserFolder.Request;
+using Application.DTOs.UserFolder.Response;
 
 namespace Application.IServices
 {
