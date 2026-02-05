@@ -1,5 +1,4 @@
-﻿using Application.DTOs.Response;
-using Domain.Models;
+﻿using Domain.Models;
 
 namespace Application.DTOs.UserTabFolder
 {
