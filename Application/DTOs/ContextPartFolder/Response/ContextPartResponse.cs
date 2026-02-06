@@ -1,4 +1,7 @@
-﻿namespace Application.DTOs.CPFolder.Response
+﻿using Application.DTOs.UserTabFolder;
+using Domain.Models;
+
+namespace Application.DTOs.CPFolder.Response
 {
     public record ContextPartResponse
     {
@@ -13,5 +16,6 @@
         // Status
         public bool IsActive { get; init; }
         public int ActiveUserCount { get; init; }
+        public List<UserTabResponse> UserTabs { get; init; } = new List<UserTabResponse>();
     }
 }

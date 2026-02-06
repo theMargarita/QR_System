@@ -8,6 +8,7 @@ namespace Domian.Models
         public string Name { get; set; } = string.Empty; //ex. bord 11
         public string ? QrToken { get; set; }
         public bool IsActive { get; set; } = true;
+
         public Context? Context { get; set; }
 
         public ICollection<UserTab>? UserTabs { get; set; } //användare som är i denna contextpart

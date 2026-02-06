@@ -18,6 +18,7 @@ namespace Domain.Models
         public ContextPart? ContextPart { get; set; }
         public ICollection<Transaction>? Transactions { get; set; }
         public ICollection<Payment>? Payments { get; set; }
+        //public ICollection<Product>? Products { get; set; } //i think this one should be here
 
         public User? User { get; set; }
 
