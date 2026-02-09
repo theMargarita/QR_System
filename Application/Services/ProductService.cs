@@ -51,7 +51,7 @@ namespace Application.Services
                 return;
             }
 
-            await _unitOfWork.Products.DeleteAsync(item);
+            await _unitOfWork.Products.DeleteAsync(item.Id);
             await _unitOfWork.SaveChangesAsync();
             _logger.LogInformation($"Product now deleted with ID {id}");
         }
@@ -138,6 +138,26 @@ namespace Application.Services
                 Category = updatedItem.Category,
                 Status = updatedItem.Status
             };
+        }
+        public async Task<IEnumerable<ProductResponse>> SearchProductAsync(string searchTerm)
+        {
+            if (string.Equals(searchTerm.ToLower(), searchTerm.ToUpper(), StringComparison.OrdinalIgnoreCase))
+            {
+                var item = await _unitOfWork.Products.SearchProduct(searchTerm);
+
+                return item.Select(p => new ProductResponse
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Description = p.Description,
+                    Price = p.Price,
+                    Category = p.Category,
+                    Status = p.Status
+                });
+            }
+
+            _logger.LogWarning($"Search term is invalid: {searchTerm}");
+            return null;
         }
     }
 }

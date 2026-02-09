@@ -8,6 +8,7 @@ namespace Domain.IRepositories
         //Task<IEnumerable<Product>> GetProductsByCategoryIdAsync(int categoryId);
         Task<IEnumerable<Product>> GetAllProductsAsync();
         Task<IEnumerable<Product>> GetActiveProductsAsync();
+        Task<IEnumerable<Product>> SearchProduct(string searchTerm);
         //Task<Product?> GetProductWithCategoryAsync(int id);
     }
 }
