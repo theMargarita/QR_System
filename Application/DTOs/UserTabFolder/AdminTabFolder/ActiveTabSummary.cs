@@ -7,7 +7,7 @@ namespace Application.DTOs.UserTabFolder.AdminTabFolder
     {
         public int TabId { get; set; }
         public string? ContextPartName { get; set; }  // "Bord 5"
-        public int ParticipantCount { get; set; }
+        public int ParticipantCount { get; set; } //might need to add more to this
 
         // Totals
         public decimal TotalAmount { get; set; }
