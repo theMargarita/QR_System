@@ -1,6 +1,6 @@
 ﻿using Application.DTOs.ContextPartFolder.Request;
 using Application.DTOs.CPFolder.Response;
-using Application.DTOs.UserTabFolder;
+using Application.DTOs.UserTabFolder.UserTabResonse;
 using Application.IServices;
 using Domain.IRepositories;
 using Domian.Models;
