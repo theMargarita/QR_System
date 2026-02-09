@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(QrDbContext))]
-    [Migration("20260205144656_AddedSomeExtraPro")]
-    partial class AddedSomeExtraPro
+    [Migration("20260209105139_init1.0")]
+    partial class init10
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -55,6 +55,32 @@ namespace Infrastructure.Migrations
                     b.HasIndex("OwnerId");
 
                     b.ToTable("contexts");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ContextPartIsUnique = true,
+                            IsActive = false,
+                            Name = "Ölkyl",
+                            OwnerId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ContextPartIsUnique = true,
+                            IsActive = false,
+                            Name = "Bar",
+                            OwnerId = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ContextPartIsUnique = true,
+                            IsActive = false,
+                            Name = "Restaurang",
+                            OwnerId = 1
+                        });
                 });
 
             modelBuilder.Entity("Domain.Models.Owner", b =>
@@ -71,7 +97,19 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("owner");
+                    b.ToTable("owners");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Digital Creation"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Margo's the owner"
+                        });
                 });
 
             modelBuilder.Entity("Domain.Models.Payment", b =>
@@ -100,14 +138,11 @@ namespace Infrastructure.Migrations
                     b.Property<int?>("UserId")
                         .HasColumnType("integer");
 
-                    b.Property<Guid?>("UserId1")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Id");
 
                     b.HasIndex("TabId");
 
-                    b.HasIndex("UserId1");
+                    b.HasIndex("UserId");
 
                     b.ToTable("payments");
                 });
@@ -145,6 +180,80 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("products");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "",
+                            ImageUrl = "",
+                            Name = "Coca Cola",
+                            Price = 25.0m,
+                            Status = 0
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Description = "",
+                            ImageUrl = "",
+                            Name = "Öl",
+                            Price = 20.0m,
+                            Status = 0
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Description = "",
+                            ImageUrl = "",
+                            Name = "Röd vin",
+                            Price = 22.0m,
+                            Status = 0
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Description = "",
+                            ImageUrl = "",
+                            Name = "Sprite",
+                            Price = 18.0m,
+                            Status = 0
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Description = "",
+                            ImageUrl = "",
+                            Name = "Water",
+                            Price = 10.0m,
+                            Status = 0
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Description = "",
+                            ImageUrl = "",
+                            Name = "Pizza",
+                            Price = 30.0m,
+                            Status = 0
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Description = "",
+                            ImageUrl = "",
+                            Name = "Pasta",
+                            Price = 28.0m,
+                            Status = 0
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Description = "",
+                            ImageUrl = "",
+                            Name = "Salad",
+                            Price = 15.0m,
+                            Status = 0
+                        });
                 });
 
             modelBuilder.Entity("Domain.Models.Transaction", b =>
@@ -170,11 +279,11 @@ namespace Infrastructure.Migrations
                     b.Property<int>("TabId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid?>("UserId1")
+                    b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
+
+                    b.Property<int?>("UserId1")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -189,9 +298,11 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Models.User", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -241,14 +352,11 @@ namespace Infrastructure.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
 
-                    b.Property<Guid?>("UserId1")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ContextPartId");
 
-                    b.HasIndex("UserId1");
+                    b.HasIndex("UserId");
 
                     b.ToTable("usertabs");
                 });
@@ -300,7 +408,7 @@ namespace Infrastructure.Migrations
 
                     b.HasOne("Domain.Models.User", "User")
                         .WithMany("Payments")
-                        .HasForeignKey("UserId1")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Tab");
@@ -343,8 +451,9 @@ namespace Infrastructure.Migrations
 
                     b.HasOne("Domain.Models.User", "User")
                         .WithMany("Tabs")
-                        .HasForeignKey("UserId1")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("ContextPart");
 
