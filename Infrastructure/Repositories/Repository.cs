@@ -21,7 +21,8 @@ namespace Infrastructure.Repositories
             return entity;
         }
 
-        public virtual async Task DeleteAsync(object id)
+        //must every int be an obejct now
+        public virtual async Task DeleteAsync(int id)
         {
             var foundId = await _dbSet.FindAsync(id); 
             if (foundId != null)
@@ -30,7 +31,7 @@ namespace Infrastructure.Repositories
             }
         }
 
-        public virtual async Task<bool> DeleteBoolAsync(object id)
+        public virtual async Task<bool> DeleteBoolAsync(int id)
         {
             var findId = await _dbSet.FindAsync(id);
             if(findId != null)
@@ -41,7 +42,7 @@ namespace Infrastructure.Repositories
             return false;
         }
 
-        public async Task<bool> ExistsAsync(object id)
+        public async Task<bool> ExistsAsync(int id)
         {
             return await _dbSet.FindAsync(id) != null;
         }
@@ -56,15 +57,26 @@ namespace Infrastructure.Repositories
             return await _dbSet.ToListAsync();
         }
 
-        public async Task<T?> GetByIdAsync(object id)
+        public async Task<T?> GetByIdAsync(int id)
         {
             return await _dbSet.FindAsync(id);
         }
 
-        public async Task<T> UpdateAsync(T entity)
+        public async Task<T?> UpdateAsync(T entity)
         {
             _dbSet.Update(entity);
             return entity;
         }
+    }
+    public static class StringHelper
+    {
+        public static bool EqualsIgnoreCase(string? a, string? b)
+            => string.Equals(a, b, StringComparison.OrdinalIgnoreCase);
+
+        public static bool ContainsIgnoreCase(string source, string value)
+            => source.Contains(value, StringComparison.OrdinalIgnoreCase);
+
+        public static string Normalize(string value)
+            => value.Trim().ToUpperInvariant();
     }
 }

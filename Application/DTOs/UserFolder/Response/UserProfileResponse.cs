@@ -6,7 +6,7 @@ namespace Application.DTOs.UserFolder.Response
 {
     public record UserProfileResponse
     {
-        public Guid Id { get; init; }
+        public int Id { get; init; }
         public string FirstName { get; init; } = string.Empty;
         public string LastName { get; init; } = string.Empty;
         public string FullName => $"{FirstName} {LastName}";

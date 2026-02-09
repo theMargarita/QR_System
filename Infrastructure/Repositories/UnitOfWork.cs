@@ -24,7 +24,7 @@ namespace Infrastructure.Repositories
         public IContextRepository Contexts => _contextRepository ??= new ContextRepository(_context);
         public IContextPartRepository ContextParts => _contextPartRepository ??= new ContextPartRepository(_context);
 
-        public IProductRepository Products => throw new NotImplementedException();
+        public IProductRepository Products => _productRepository ??= new ProductRepository(_context);
 
         public IUserTabRepository UserTabs => throw new NotImplementedException();
 

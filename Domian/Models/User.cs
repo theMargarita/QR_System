@@ -5,7 +5,7 @@ namespace Domain.Models
     public class User
     {
         //public int Id { get; set; }
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public int Id { get; set; }
 
         [Required]
         public string FirstName { get; set; } = string.Empty;

@@ -166,7 +166,7 @@ namespace Application.Services
                 return false;
             }
 
-            await _unitOfWork.ContextParts.DeleteAsync(contextPart);
+            await _unitOfWork.ContextParts.DeleteAsync(contextPart.Id);
             await _unitOfWork.SaveChangesAsync();
 
             _logger.LogInformation($"Successfully removed ContextPart with ID: {contextPartId}");

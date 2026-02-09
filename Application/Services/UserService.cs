@@ -7,6 +7,7 @@ using Domain.Models;
 
 
 using Microsoft.Extensions.Logging;
+using System.Xml.Linq;
 
 namespace Application.Services
 {
@@ -44,7 +45,7 @@ namespace Application.Services
                 CreatedAt = user.CreatedAt
             };
         }
-        public async Task<bool> RemoveUserAsync(Guid id)
+        public async Task<bool> RemoveUserAsync(int id)
         {
             var user = _unitOfWork.Users.GetByIdAsync(id);
             if (user == null)
@@ -55,7 +56,7 @@ namespace Application.Services
             await _unitOfWork.SaveChangesAsync();
             return true;
         }
-        public async Task<UserResponse> GetUserByIdAsync(Guid id)
+        public async Task<UserResponse> GetUserByIdAsync(int id)
         {
             var user = await _unitOfWork.Users.GetByIdAsync(id);
             if (user == null)
@@ -74,7 +75,7 @@ namespace Application.Services
 
         public async Task<IEnumerable<UserResponse>> GetAllUsersAsync()
         {
-            var user =  _unitOfWork.Users.FindAsync(u => true).Result
+            var user = _unitOfWork.Users.FindAsync(u => true).Result
                 .Select(u => new UserResponse
                 {
                     Id = u.Id,
@@ -88,22 +89,29 @@ namespace Application.Services
             return user;
         }
 
+        //must test to se if it works
         public async Task<UserResponse?> GetUserByNameAsync(string name)
         {
-            var user = _unitOfWork.Users.FindAsync(u => u.FirstName == name || u.LastName == name).Result
-                .Select(u => new UserResponse
-                {
-                    Id = u.Id,
-                    FirstName = u.FirstName,
-                    LastName = u.LastName,
-                    PhoneNumber = u.PhoneNumber,
-                    HasPaid = u.Payments != null && u.Payments.Any(p => p.Amount > 0)
-                })
-                .FirstOrDefault();
-            await _unitOfWork.Users.GetAllAsync();
-            await _unitOfWork.SaveChangesAsync();
+            if (string.Equals(name.ToLower(), name.ToUpper(), StringComparison.OrdinalIgnoreCase))
+            {
 
-            return user;
+
+                var user = _unitOfWork.Users.FindAsync(u => u.FirstName == name || u.LastName == name).Result
+                    .Select(u => new UserResponse
+                    {
+                        Id = u.Id,
+                        FirstName = u.FirstName,
+                        LastName = u.LastName,
+                        PhoneNumber = u.PhoneNumber,
+                        HasPaid = u.Payments != null && u.Payments.Any(p => p.Amount > 0)
+                    })
+                    .FirstOrDefault();
+                await _unitOfWork.Users.GetAllAsync();
+
+                return user;
+            }
+
+            return null;
         }
 
         public async Task<UserResponse?> GetUserByPhoneAsync(string phoneNumber)
@@ -121,7 +129,7 @@ namespace Application.Services
         }
 
         //maybe should also have showUSerProfile? 
-        public async Task<UserProfileResponse?> GetUserProfileAsync(Guid userId)
+        public async Task<UserProfileResponse?> GetUserProfileAsync(int userId)
         {
             var user = await _unitOfWork.Users.GetByIdAsync(userId);
             if (user == null)
@@ -170,18 +178,25 @@ namespace Application.Services
             });
         }
 
-
+        //must test to se if it works
         public async Task<IEnumerable<UserResponse>> SearchUsersAsync(string searchTerm)
         {
-            var users = await _unitOfWork.Users.SearchUsersAsync(searchTerm);
-            return users.Select(u => new UserResponse { 
-                Id = u.Id, 
-                FirstName = u.FirstName, 
-                LastName = u.LastName, 
-                PhoneNumber = u.PhoneNumber, 
-                HasPaid = u.Payments != null && u.Payments
-                .Any(p => p.Amount > 0) });
+            if (string.Equals(searchTerm.ToLower(), searchTerm.ToUpper(), StringComparison.OrdinalIgnoreCase))
+            {
+                var users = await _unitOfWork.Users.SearchUsersAsync(searchTerm);
+                return users.Select(u => new UserResponse
+                {
+                    Id = u.Id,
+                    FirstName = u.FirstName,
+                    LastName = u.LastName,
+                    PhoneNumber = u.PhoneNumber,
+                    HasPaid = u.Payments != null && u.Payments
+                    .Any(p => p.Amount > 0)
+                });
+            }
+            _logger.LogInformation($"Search term was invalid: {searchTerm}");
+            return null;
         }
-       
+
     }
 }

@@ -21,9 +21,19 @@ namespace Infrastructure.Repositories
             return await _dbSet.Where(p => p.Category != null).ToListAsync();
         }
 
+        public async Task<IEnumerable<Product>> SearchProduct(string searchTerm)
+        {
+            return await _dbSet
+                .Where(p => p.Name.Contains(searchTerm) ||
+                            p.Description.Contains(searchTerm) ||
+                            p.Category!.Contains(searchTerm))
+                .OrderBy(p => p.Name)
+                .ToListAsync();
+        }
+
         //public async Task<IEnumerable<Product>> GetProductsByCategoryIdAsync(int categoryId)
         //{
-            
+
         //}
 
         //public Task<Product?> GetProductWithCategoryAsync(int id)
