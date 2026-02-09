@@ -1,5 +1,5 @@
-﻿using Application.DTOs.Requests;
-using Application.DTOs.Response;
+﻿using Application.DTOs.ContextFolder.Request;
+using Application.DTOs.ContextFolder.Response;
 using Application.IServices;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,7 +19,7 @@ namespace QR_System.Controllers
 
         //should be a response instead a request because it could be nice with an id
         [HttpPost("createContext")]
-        public async Task<ActionResult<ContextResponse>> CreateContext([FromBody] CreateContextRequest newContext)
+        public async Task<ActionResult<ContextResponse>> CreateContext([FromBody] QrContextPartRequest newContext)
         {
             var context = await _contextService.CreateContextAsync(newContext);
 
