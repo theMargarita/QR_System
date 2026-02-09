@@ -4,9 +4,10 @@ namespace Domain.IRepositories
 {
     public interface IProductRepository : IRepository<Product>
     {
-        Task<IEnumerable<Product>> GetProductsByCategoryIdAsync(int categoryId);
-        Task<IEnumerable<Product>> GetAllProductsWithCategoriesAsync();
+        //category does not exist at the moment
+        //Task<IEnumerable<Product>> GetProductsByCategoryIdAsync(int categoryId);
+        Task<IEnumerable<Product>> GetAllProductsAsync();
         Task<IEnumerable<Product>> GetActiveProductsAsync();
-        Task<Product?> GetProductWithCategoryAsync(int id);
+        //Task<Product?> GetProductWithCategoryAsync(int id);
     }
 }
