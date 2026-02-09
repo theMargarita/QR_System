@@ -25,6 +25,7 @@ namespace QR_System
             builder.Services.AddScoped<IContextService, ContextService>();
             builder.Services.AddScoped<IContextPartService, ContextPartService>();
             builder.Services.AddScoped<IProductService, ProductService>();
+            //builder.Services.AddScoped<IUserTabService, UserTabService>();
 
             // Controllers
             builder.Services.AddControllers();
