@@ -27,15 +27,6 @@ namespace Domain.Models
 
         public bool IsPaid() => Payments != null && Transactions != null &&
             Payments.Sum(p => p.Amount) >= Transactions.Sum(t => t.Total);
-
-        public void Close()
-        {
-            if (Status != TabStatus.Closed)
-            {
-                Status = TabStatus.Closed;
-                ClosedAt = DateTimeOffset.UtcNow;
-            }
-        }
     }
     public enum TabStatus
     {
