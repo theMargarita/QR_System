@@ -26,7 +26,7 @@ namespace Infrastructure.Repositories
 
         public IProductRepository Products => _productRepository ??= new ProductRepository(_context);
 
-        public IUserTabRepository UserTabs => throw new NotImplementedException();
+        public IUserTabRepository UserTabs => _userTabRepository ??= new UserTabRepository(_context);
 
         public ITransactionRepository Transactions => throw new NotImplementedException();
 
