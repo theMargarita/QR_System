@@ -1,21 +1,25 @@
-﻿using Domian.Models;
+﻿using Domain.Models;
+using Domian.Models;
 
 namespace Domain.IRepositories
 {
-    public interface IContextPartRepository
+    public interface IContextPartRepository : IRepository<ContextPart>
     {
-        //is this really nessary when there is unit of work?
-        Task<ContextPart> CreateContextPartAsync(ContextPart contextPart);
-        Task<ContextPart> GetByIdAsync(int contextPartId);
-        //active tables 
-        Task<ContextPart> GetActivePartAsync(int userId, int tabId);
+        // QR Code methods
+        Task<ContextPart?> GetByQrTokenAsync(string qrToken);
         Task<bool> QRTokenExistsAsync(string qrToken);
 
-        //Do i need this? maybe not
-        //Task<List<ContextPart>> GetByTabIdAsync(int tabId);
-        ContextPart Update(ContextPart contextPart);
-        Task<bool> ExistsAsync(int userId, int tabId);
-        //might need to change this to count how many user is active on a specific table
-        Task<int> AmoutOfUserOnAPartAsync();
+        // Query methods
+        Task<List<ContextPart>> GetPartsByContextIdAsync(int contextId);
+        Task<ContextPart?> GetByIdWithDetailsAsync(int contextPartId);
+        Task<List<ContextPart>> GetActivePartsAsync();
+        Task<List<ContextPart>> GetOccupiedPartsAsync(int contextId);
+
+        // User tab methods
+        Task<bool> UserHasActiveTabAsync(int contextPartId, int userId);
+        Task<UserTab?> GetUserActiveTabAsync(int contextPartId, int userId);
+        Task<int> GetActiveUserCountAsync(int contextPartId);
     }
 }
+
+

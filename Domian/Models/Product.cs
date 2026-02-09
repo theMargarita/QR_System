@@ -12,7 +12,7 @@ namespace Domain.Models
         public string? Category { get; set; } 
 
         [MaxLength(500)]
-        public string ImageUrl { get; set; } = string.Empty;
+        public string ImageUrl { get; set; } = string.Empty; //will remove this later
         public ProductStatus Status { get; set; }  = ProductStatus.Active;
     }
     public enum ProductStatus

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Application.DTOs.Requests
+namespace Application.DTOs.UserFolder.Request
 {
     public record CreateUserRequest //DTO for creating or updating a User
     {

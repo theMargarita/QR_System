@@ -1,4 +1,4 @@
-﻿namespace Application.DTOs.Response
+﻿namespace Application.DTOs.UserFolder.Response
 {
     public record UserResponse
     {

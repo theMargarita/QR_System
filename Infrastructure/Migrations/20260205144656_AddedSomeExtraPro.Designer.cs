@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(QrDbContext))]
-    partial class QrDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260205144656_AddedSomeExtraPro")]
+    partial class AddedSomeExtraPro
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,32 +55,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("OwnerId");
 
                     b.ToTable("contexts");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            ContextPartIsUnique = true,
-                            IsActive = false,
-                            Name = "Ölkyl",
-                            OwnerId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            ContextPartIsUnique = true,
-                            IsActive = false,
-                            Name = "Bar",
-                            OwnerId = 1
-                        },
-                        new
-                        {
-                            Id = 3,
-                            ContextPartIsUnique = true,
-                            IsActive = false,
-                            Name = "Restaurang",
-                            OwnerId = 1
-                        });
                 });
 
             modelBuilder.Entity("Domain.Models.Owner", b =>
@@ -94,19 +71,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("owners");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Digital Creation"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Margo's the owner"
-                        });
+                    b.ToTable("owner");
                 });
 
             modelBuilder.Entity("Domain.Models.Payment", b =>
@@ -180,80 +145,6 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("products");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Description = "",
-                            ImageUrl = "",
-                            Name = "Coca Cola",
-                            Price = 25.0m,
-                            Status = 0
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Description = "",
-                            ImageUrl = "",
-                            Name = "Öl",
-                            Price = 20.0m,
-                            Status = 0
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Description = "",
-                            ImageUrl = "",
-                            Name = "Röd vin",
-                            Price = 22.0m,
-                            Status = 0
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Description = "",
-                            ImageUrl = "",
-                            Name = "Sprite",
-                            Price = 18.0m,
-                            Status = 0
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Description = "",
-                            ImageUrl = "",
-                            Name = "Water",
-                            Price = 10.0m,
-                            Status = 0
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Description = "",
-                            ImageUrl = "",
-                            Name = "Pizza",
-                            Price = 30.0m,
-                            Status = 0
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Description = "",
-                            ImageUrl = "",
-                            Name = "Pasta",
-                            Price = 28.0m,
-                            Status = 0
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Description = "",
-                            ImageUrl = "",
-                            Name = "Salad",
-                            Price = 15.0m,
-                            Status = 0
-                        });
                 });
 
             modelBuilder.Entity("Domain.Models.Transaction", b =>

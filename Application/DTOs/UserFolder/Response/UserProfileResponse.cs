@@ -1,6 +1,8 @@
-﻿using Application.DTOs.Summary;
+﻿using Application.DTOs.PaymentFolder;
+using Application.DTOs.TransactionFolder;
+using Application.DTOs.UserTabFolder;
 
-namespace Application.DTOs.Response
+namespace Application.DTOs.UserFolder.Response
 {
     public record UserProfileResponse
     {

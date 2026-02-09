@@ -18,12 +18,12 @@ namespace QR_System
 
             // Repositories
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-            //builder.Services.AddScoped<IUserRepository, UserRepository>();
 
             // Services
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IQrCodeService, QrCodeService>();
             builder.Services.AddScoped<IContextService, ContextService>();
+            builder.Services.AddScoped<IContextPartService, ContextPartService>();
 
             // Controllers
             builder.Services.AddControllers();
@@ -33,12 +33,8 @@ namespace QR_System
             builder.Services.AddSwaggerGen();
 
             // Database
-            //builder.Services.AddDbContext<QrDbContext>(options =>
-            //    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
             builder.Services.AddDbContext<QrDbContext>(options =>
                 options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-            //builder.Services.AddAutoMapper(typeof(Program));
 
             var app = builder.Build();
 

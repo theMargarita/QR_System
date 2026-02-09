@@ -1,5 +1,5 @@
-﻿using Application.DTOs.Requests;
-using Application.DTOs.Response;
+﻿using Application.DTOs.ContextFolder.Request;
+using Application.DTOs.ContextFolder.Response;
 using Application.IServices;
 using Domain.IRepositories;
 using Domain.Models;
@@ -33,21 +33,21 @@ namespace Application.Services
         }
 
         // Generates a unique QR token for a context when a new context is created 
-        public string GenerateUniqueQRToken()
-        {
-            string qrToken;
-            do
-            {
-                //generate a random token
-                qrToken = $"CTX_{Guid.NewGuid().ToString("N").Substring(0, 8).ToUpper()}";
-            }
-            while (_unitOfWork.Contexts.QRTokenExistsAsync(qrToken).Result);
-            return qrToken;
-        }
+        //public string GenerateUniqueQRToken()
+        //{
+        //    string qrToken;
+        //    do
+        //    {
+        //        //generate a random token
+        //        qrToken = $"CTX_{Guid.NewGuid().ToString("N").Substring(0, 8).ToUpper()}";
+        //    }
+        //    while (_unitOfWork.Contexts.QRTokenExistsAsync(qrToken).Result);
+        //    return qrToken;
+        //}
 
-        public async Task<CreateContextRequest?> CreateContextAsync(CreateContextRequest newContext)
+        public async Task<QrContextPartRequest?> CreateContextAsync(QrContextPartRequest newContext)
         {
-            var uniqueToken = GenerateUniqueQRToken();
+            //var uniqueToken = GenerateUniqueQRToken();
 
             var contextEntity = new Context
             {
@@ -70,7 +70,7 @@ namespace Application.Services
                 }
                 return null;
             }
-            newContext.QrToken = uniqueToken;
+            //newContext.QrToken = uniqueToken;
 
             return newContext;
         }
@@ -117,29 +117,29 @@ namespace Application.Services
             };
         }
 
-        public async Task<ContextResponse?> GetContextPartByQrTokenAsync(string qrToken)
-        {
-            var getQr = await _unitOfWork.Contexts.GetByQrCodeTokenAsync(qrToken);
+        //public async Task<ContextResponse?> GetContextPartByQrTokenAsync(string qrToken)
+        //{
+        //    var getQr = await _unitOfWork.Contexts.GetByQrCodeTokenAsync(qrToken);
 
-            if (getQr == null)
-            {
-                _logger.LogWarning($"Context with QR Token {qrToken} not found.");
-                return null;
-            }
+        //    if (getQr == null)
+        //    {
+        //        _logger.LogWarning($"Context with QR Token {qrToken} not found.");
+        //        return null;
+        //    }
 
-            return new ContextResponse
-            {
-                Id = getQr.Id,
-                Name = getQr.Name,
-                QrToken = getQr.QrToken,
-                IsActive = getQr.IsActive,
-                OwnerId = getQr.OwnerId,
-                OwnerName = getQr.Owner?.Name,
-                ContextPartIsUnique = getQr.ContextPartIsUnique,
-                //ContextPartsid = getQr.Parts.Select(p => p.Id).ToList(),
-                //PartName = getQr.ContextPart?.Name
-            };
-        }
+        //    return new ContextResponse
+        //    {
+        //        Id = getQr.Id,
+        //        Name = getQr.Name,
+        //        QrToken = getQr.QrToken,
+        //        IsActive = getQr.IsActive,
+        //        OwnerId = getQr.OwnerId,
+        //        OwnerName = getQr.Owner?.Name,
+        //        ContextPartIsUnique = getQr.ContextPartIsUnique,
+        //        //ContextPartsid = getQr.Parts.Select(p => p.Id).ToList(),
+        //        //PartName = getQr.ContextPart?.Name
+        //    };
+        //}
 
         public async Task<bool> IsContextActiveAsync(int contextId)
         {

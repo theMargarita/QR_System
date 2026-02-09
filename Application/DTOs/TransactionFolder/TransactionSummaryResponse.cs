@@ -1,4 +1,4 @@
-﻿namespace Application.DTOs.Summary
+﻿namespace Application.DTOs.TransactionFolder
 {
     public record TransactionSummaryResponse
     {

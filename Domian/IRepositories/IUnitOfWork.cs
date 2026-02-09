@@ -4,6 +4,7 @@
     {
         IUserRepository Users { get; }
         IContextRepository Contexts { get; }
+        IContextPartRepository ContextParts { get; }
         IProductRepository Products { get; }
         IUserTabRepository UserTabs { get; }
         ITransactionRepository Transactions { get; }

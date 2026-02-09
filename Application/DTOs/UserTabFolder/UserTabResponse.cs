@@ -1,7 +1,8 @@
-﻿using Application.DTOs.Summary;
+﻿using Application.DTOs.PaymentFolder;
+using Application.DTOs.TransactionFolder;
 using Domain.Models;
 
-namespace Application.DTOs.Response
+namespace Application.DTOs.UserTabFolder
 {
     public record UserTabResponse
     {

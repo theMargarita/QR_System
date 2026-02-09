@@ -8,7 +8,7 @@ namespace Domain.Models
         public int UserId { get; set; }
         public int ContextId { get; set; }
         public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
-        public DateTimeOffset ClosedAt { get; set; } = DateTimeOffset.UtcNow; 
+        public DateTimeOffset ClosedAt { get; set; } = DateTimeOffset.UtcNow;
         public TabStatus Status { get; set; }
 
         public int? OwnerId { get; set; }
@@ -18,13 +18,24 @@ namespace Domain.Models
         public ContextPart? ContextPart { get; set; }
         public ICollection<Transaction>? Transactions { get; set; }
         public ICollection<Payment>? Payments { get; set; }
+        //public ICollection<Product>? Products { get; set; } //i think this one should be here
 
-        //not fully sure about this one
         public User? User { get; set; }
 
+        // Derived property för enklare checks
+        public bool IsClosed => Status == TabStatus.Closed || ClosedAt.Equals(DateTimeOffset.UtcNow);
 
         public bool IsPaid() => Payments != null && Transactions != null &&
             Payments.Sum(p => p.Amount) >= Transactions.Sum(t => t.Total);
+
+        public void Close()
+        {
+            if (Status != TabStatus.Closed)
+            {
+                Status = TabStatus.Closed;
+                ClosedAt = DateTimeOffset.UtcNow;
+            }
+        }
     }
     public enum TabStatus
     {
@@ -32,7 +43,6 @@ namespace Domain.Models
         Paid = 2,
         Closed = 3,
     }
-
 
 
     //order (gruppering)

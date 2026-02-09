@@ -1,8 +1,8 @@
-﻿namespace Application.DTOs.Requests
+﻿namespace Application.DTOs.ContextFolder.Request
 {
 
     // create new context (ex bord)
-    public record CreateContextRequest
+    public record QrContextPartRequest
     {
         public string Name { get; init; } = string.Empty;
         public string? QrToken { get; set; }

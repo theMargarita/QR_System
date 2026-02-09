@@ -1,6 +1,6 @@
 ﻿namespace Domain.Models
 {
-    public class Transaction
+    public class Transaction //kanske sak hete kvitto eller liknande 
     {
         public int Id { get; set; }
         public int Quantity { get; set; }

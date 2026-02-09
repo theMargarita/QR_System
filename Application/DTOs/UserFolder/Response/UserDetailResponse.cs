@@ -1,4 +1,7 @@
-﻿namespace Application.DTOs.Response
+﻿using Application.DTOs.TransactionFolder;
+using Application.DTOs.UserTabFolder;
+
+namespace Application.DTOs.UserFolder.Response
 {
     public record UserDetailResponse
     {
