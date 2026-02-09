@@ -10,5 +10,6 @@ namespace Application.IServices
         Task<IEnumerable<ProductResponse>> GetActiveProductsAsync();
         Task UpdateProductAsync(int id, ProductRequest request);
         Task DeleteProductAsync(int id);
+        Task <IEnumerable<ProductResponse>>SearchProductAsync(string searchTerm);
     }
 }
