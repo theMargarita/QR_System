@@ -40,16 +40,20 @@ namespace QR_System.Controllers
         [HttpGet("name/{name}")]
         public async Task<IActionResult> GetUserByName(string name)
         {
+
             var user = await _userService.GetUserByNameAsync(name);
+
             if (user == null)
             {
                 return NotFound();
             }
             return Ok(user);
+
+
         }
 
         //this one works now as it should
-        [HttpPost ("CreateUser")]
+        [HttpPost("CreateUser")]
         [ProducesResponseType(typeof(CreateUserRequest), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
 
@@ -65,13 +69,13 @@ namespace QR_System.Controllers
         [HttpDelete]
         [ProducesResponseType(typeof(CreateUserRequest), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> DeleteUser(Guid id)
+        public async Task<IActionResult> DeleteUser(int id)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             await _userService.GetUserByIdAsync(id);
 
-            if(id == null)
+            if (id == null)
             {
                 return NotFound($"Could not find the use with the Id: {id}");
             }

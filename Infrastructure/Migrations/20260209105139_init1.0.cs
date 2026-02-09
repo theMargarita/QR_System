@@ -4,10 +4,12 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class changedIntToGuidAndFirstMigrationNow : Migration
+    public partial class init10 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,7 +18,7 @@ namespace Infrastructure.Migrations
                 .Annotation("Npgsql:PostgresExtension:uuid-ossp", ",,");
 
             migrationBuilder.CreateTable(
-                name: "owner",
+                name: "owners",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -25,7 +27,7 @@ namespace Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_owner", x => x.Id);
+                    table.PrimaryKey("PK_owners", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -50,7 +52,8 @@ namespace Infrastructure.Migrations
                 name: "users",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     FirstName = table.Column<string>(type: "text", nullable: false),
                     LastName = table.Column<string>(type: "text", nullable: false),
                     PhoneNumber = table.Column<string>(type: "text", nullable: true),
@@ -77,9 +80,9 @@ namespace Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_contexts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_contexts_owner_OwnerId",
+                        name: "FK_contexts_owners_OwnerId",
                         column: x => x.OwnerId,
-                        principalTable: "owner",
+                        principalTable: "owners",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -91,7 +94,8 @@ namespace Infrastructure.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: false),
-                    QrToken = table.Column<string>(type: "text", nullable: false),
+                    QrToken = table.Column<string>(type: "text", nullable: true),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
                     ContextId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
@@ -117,8 +121,7 @@ namespace Infrastructure.Migrations
                     ClosedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
                     OwnerId = table.Column<int>(type: "integer", nullable: true),
-                    ContextPartId = table.Column<int>(type: "integer", nullable: true),
-                    UserId1 = table.Column<Guid>(type: "uuid", nullable: true)
+                    ContextPartId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -130,8 +133,8 @@ namespace Infrastructure.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_usertabs_users_UserId1",
-                        column: x => x.UserId1,
+                        name: "FK_usertabs_users_UserId",
+                        column: x => x.UserId,
                         principalTable: "users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -148,15 +151,14 @@ namespace Infrastructure.Migrations
                     Method = table.Column<int>(type: "integer", nullable: false),
                     Note = table.Column<string>(type: "text", nullable: true),
                     TabId = table.Column<int>(type: "integer", nullable: true),
-                    UserId1 = table.Column<Guid>(type: "uuid", nullable: true),
                     UserId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_payments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_payments_users_UserId1",
-                        column: x => x.UserId1,
+                        name: "FK_payments_users_UserId",
+                        column: x => x.UserId,
                         principalTable: "users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -179,8 +181,8 @@ namespace Infrastructure.Migrations
                     CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     ProductId = table.Column<int>(type: "integer", nullable: false),
                     TabId = table.Column<int>(type: "integer", nullable: false),
-                    UserId1 = table.Column<Guid>(type: "uuid", nullable: true),
-                    UserId = table.Column<int>(type: "integer", nullable: false)
+                    UserId1 = table.Column<int>(type: "integer", nullable: true),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -205,6 +207,40 @@ namespace Infrastructure.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.InsertData(
+                table: "owners",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Digital Creation" },
+                    { 2, "Margo's the owner" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "products",
+                columns: new[] { "Id", "Category", "Description", "ImageUrl", "Name", "Price", "Status" },
+                values: new object[,]
+                {
+                    { 1, null, "", "", "Coca Cola", 25.0m, 0 },
+                    { 2, null, "", "", "Öl", 20.0m, 0 },
+                    { 3, null, "", "", "Röd vin", 22.0m, 0 },
+                    { 4, null, "", "", "Sprite", 18.0m, 0 },
+                    { 5, null, "", "", "Water", 10.0m, 0 },
+                    { 6, null, "", "", "Pizza", 30.0m, 0 },
+                    { 7, null, "", "", "Pasta", 28.0m, 0 },
+                    { 8, null, "", "", "Salad", 15.0m, 0 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "contexts",
+                columns: new[] { "Id", "ContextPartIsUnique", "IsActive", "Name", "OwnerId", "QrToken" },
+                values: new object[,]
+                {
+                    { 1, true, false, "Ölkyl", 1, null },
+                    { 2, true, false, "Bar", 1, null },
+                    { 3, true, false, "Restaurang", 1, null }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_contextparts_ContextId",
                 table: "contextparts",
@@ -221,9 +257,9 @@ namespace Infrastructure.Migrations
                 column: "TabId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_payments_UserId1",
+                name: "IX_payments_UserId",
                 table: "payments",
-                column: "UserId1");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_transactions_ProductId",
@@ -246,9 +282,9 @@ namespace Infrastructure.Migrations
                 column: "ContextPartId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_usertabs_UserId1",
+                name: "IX_usertabs_UserId",
                 table: "usertabs",
-                column: "UserId1");
+                column: "UserId");
         }
 
         /// <inheritdoc />
@@ -276,7 +312,7 @@ namespace Infrastructure.Migrations
                 name: "contexts");
 
             migrationBuilder.DropTable(
-                name: "owner");
+                name: "owners");
         }
     }
 }

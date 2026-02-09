@@ -58,7 +58,7 @@ namespace Infrastructure.Repositories
            return await _dbSet.Include(u => u.Tabs)
                 .ThenInclude(t => t.Transactions).ToListAsync();
         }
-        public async Task<User?> GetUserProfileAsync(Guid userId)
+        public async Task<User?> GetUserProfileAsync(int userId)
         {
             return await _dbSet
                 .Include(u => u.Tabs!
