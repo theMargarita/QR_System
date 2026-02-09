@@ -62,10 +62,12 @@ namespace Infrastructure.Repositories
             return await _dbSet.FindAsync(id);
         }
 
-        public async Task<T?> UpdateAsync(T entity)
+        public async Task<T> UpdateAsync(T entity)
         {
-            _dbSet.Update(entity);
-            return entity;
+            var findId = await _dbSet.FindAsync(entity);
+
+            _dbSet.Update(findId);
+            return findId;
         }
     }
     public static class StringHelper
