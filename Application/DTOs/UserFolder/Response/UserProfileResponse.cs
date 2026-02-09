@@ -1,6 +1,6 @@
 ﻿using Application.DTOs.PaymentFolder;
 using Application.DTOs.TransactionFolder;
-using Application.DTOs.UserTabFolder;
+using Application.DTOs.UserTabFolder.AdminTabFolder;
 
 namespace Application.DTOs.UserFolder.Response
 {
@@ -14,7 +14,7 @@ namespace Application.DTOs.UserFolder.Response
         public DateTime CreatedAt { get; init; }
 
         // Aktiva tabs
-        public List<UserTabSummaryResponse> ActiveTabs { get; init; } = new();
+        public List<ActiveTabSummary> ActiveTabs { get; init; } = new();
 
         // Senaste transaktioner
         public List<TransactionSummaryResponse> RecentTransactions { get; init; } = new();

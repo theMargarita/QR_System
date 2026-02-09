@@ -1,5 +1,5 @@
 ﻿using Application.DTOs.TransactionFolder;
-using Application.DTOs.UserTabFolder;
+using Application.DTOs.UserTabFolder.UserTabResonse;
 
 namespace Application.DTOs.UserFolder.Response
 {
