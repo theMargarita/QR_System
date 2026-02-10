@@ -1,28 +1,24 @@
 ﻿using Application.DTOs.UserFolder.Request;
 using Application.DTOs.UserFolder.Response;
-using Application.DTOs.UserTabFolder;
 using Application.IServices;
-using Domain.IRepositories;
 using Domain.Models;
-
-
+using Infrastructure.Data;
+using Infrastructure.Extensions;
 using Microsoft.Extensions.Logging;
-using System.Xml.Linq;
 
 namespace Application.Services
 {
-    //DO NOT FORGET SAVECHANGES!
     public class UserService : IUserService
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly ILogger<UserService> _logger;
-        public UserService(IUnitOfWork unitOfWork, ILogger<UserService> logger)
+        private readonly QrDbContext _context;
+        private readonly ILogger _logger;
+        public UserService(QrDbContext contect, ILogger<UserService> logger)
         {
-            _unitOfWork = unitOfWork;
+            _context = contect;
             _logger = logger;
         }
 
-        public async Task<CreateUserRequest?> CreateUserAsync(CreateUserRequest newUser)
+        public async Task<UserResponse?> CreateUserAsync(CreateUserRequest newUser)
         {
             var user = new User
             {
@@ -32,171 +28,86 @@ namespace Application.Services
                 CreatedAt = newUser.CreatedAt.UtcDateTime
             };
 
-            await _unitOfWork.Users.CreateAsync(user);
-            await _unitOfWork.SaveChangesAsync();
-
-            _logger.LogInformation("Created new user with ID {UserId}", user.Id);
-
-            return new CreateUserRequest
+            if(user == null)
             {
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                PhoneNumber = user.PhoneNumber,
-                CreatedAt = user.CreatedAt
-            };
-        }
-        public async Task<bool> RemoveUserAsync(int id)
-        {
-            var user = _unitOfWork.Users.GetByIdAsync(id);
-            if (user == null)
-            {
-                return false;
-            }
-            await _unitOfWork.Users.DeleteAsync(id);
-            await _unitOfWork.SaveChangesAsync();
-            return true;
-        }
-        public async Task<UserResponse> GetUserByIdAsync(int id)
-        {
-            var user = await _unitOfWork.Users.GetByIdAsync(id);
-            if (user == null)
-            {
+                _logger.LogError("Failed to create user");
                 return null;
             }
-            return new UserResponse
+
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation($"Created new user with ID {user.Id}");
+
+            return  UserResponse.FromUser(user);
+
+        }
+        
+        //how does it work to remove a user with a guid id?
+        public async Task<bool> RemoveUserAsync(Guid id)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if(user == null)
             {
-                Id = user.Id,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                PhoneNumber = user.PhoneNumber,
-                HasPaid = user.Payments != null && user.Payments.Any(p => p.Amount > 0)
-            };
+                _logger.LogWarning($"User with ID {id} not found for deletion.");
+            }
+
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation($"Deleted user with ID {id}.");
+            return true;
+        }
+        public async Task<UserResponse> GetUserByIdAsync(Guid id)
+        {
+           var user = await _context.Users.FindAsync(id);
+            if (user == null)
+            {
+                _logger.LogWarning($"User with ID {id} not found.");
+            }
+            return UserResponse.FromUser(user);
         }
 
         public async Task<IEnumerable<UserResponse>> GetAllUsersAsync()
         {
-            var user = _unitOfWork.Users.FindAsync(u => true).Result
-                .Select(u => new UserResponse
-                {
-                    Id = u.Id,
-                    FirstName = u.FirstName,
-                    LastName = u.LastName,
-                    PhoneNumber = u.PhoneNumber,
-                    HasPaid = u.Payments != null && u.Payments.Any(p => p.Amount > 0)
-                });
-            await _unitOfWork.Users.GetAllAsync();
-            await _unitOfWork.SaveChangesAsync();
-            return user;
-        }
+            var user = _context.Users;
 
-        //must test to se if it works
-        public async Task<UserResponse?> GetUserByNameAsync(string name)
-        {
-            if (string.Equals(name.ToLower(), name.ToUpper(), StringComparison.OrdinalIgnoreCase))
-            {
-
-
-                var user = _unitOfWork.Users.FindAsync(u => u.FirstName == name || u.LastName == name).Result
-                    .Select(u => new UserResponse
-                    {
-                        Id = u.Id,
-                        FirstName = u.FirstName,
-                        LastName = u.LastName,
-                        PhoneNumber = u.PhoneNumber,
-                        HasPaid = u.Payments != null && u.Payments.Any(p => p.Amount > 0)
-                    })
-                    .FirstOrDefault();
-                await _unitOfWork.Users.GetAllAsync();
-
-                return user;
-            }
-
-            return null;
-        }
-
-        public async Task<UserResponse?> GetUserByPhoneAsync(string phoneNumber)
-        {
-            return _unitOfWork.Users.FindAsync(u => u.PhoneNumber == phoneNumber).Result
-                .Select(u => new UserResponse
-                {
-                    Id = u.Id,
-                    FirstName = u.FirstName,
-                    LastName = u.LastName,
-                    PhoneNumber = u.PhoneNumber,
-                    HasPaid = u.Payments != null && u.Payments.Any(p => p.Amount > 0)
-                })
-                .FirstOrDefault();
-        }
-
-        //maybe should also have showUSerProfile? 
-        public async Task<UserProfileResponse?> GetUserProfileAsync(int userId)
-        {
-            var user = await _unitOfWork.Users.GetByIdAsync(userId);
-            if (user == null)
-            {
-                return null;
-            }
-
-            return new UserProfileResponse
-            {
-                Id = user.Id,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                PhoneNumber = user.PhoneNumber,
-                CreatedAt = user.CreatedAt,
-                ActiveTabs = user.Tabs != null ? user.Tabs.Select(t => new UserTabSummaryResponse
-                {
-                    Id = t.Id,
-
-
-                }).ToList() : new List<UserTabSummaryResponse>()
-            };
-        }
-        public async Task<IEnumerable<UserResponse>> GetUsersWithTabsAsync()
-        {
-            var users = await _unitOfWork.Users.GetUsersWithTabsAsync();
-            return users.Select(u => new UserResponse
-            {
-                Id = u.Id,
-                FirstName = u.FirstName,
-                LastName = u.LastName,
-                PhoneNumber = u.PhoneNumber,
-                HasPaid = u.Payments != null && u.Payments.Any(p => p.Amount > 0)
-            });
-        }
-
-        public async Task<IEnumerable<UserResponse>> GetUsersWithTransactionsAsync()
-        {
-            var users = await _unitOfWork.Users.GetUsersWithTransactionsAsync();
-            return users.Select(u => new UserResponse
-            {
-                Id = u.Id,
-                FirstName = u.FirstName,
-                LastName = u.LastName,
-                PhoneNumber = u.PhoneNumber,
-                HasPaid = u.Payments != null && u.Payments.Any(p => p.Amount > 0)
-            });
+            return user.Select(u => UserResponse.FromUser(u)).ToList();
         }
 
         //must test to se if it works
         public async Task<IEnumerable<UserResponse>> SearchUsersAsync(string searchTerm)
         {
-            if (string.Equals(searchTerm.ToLower(), searchTerm.ToUpper(), StringComparison.OrdinalIgnoreCase))
-            {
-                var users = await _unitOfWork.Users.SearchUsersAsync(searchTerm);
-                return users.Select(u => new UserResponse
-                {
-                    Id = u.Id,
-                    FirstName = u.FirstName,
-                    LastName = u.LastName,
-                    PhoneNumber = u.PhoneNumber,
-                    HasPaid = u.Payments != null && u.Payments
-                    .Any(p => p.Amount > 0)
-                });
-            }
-            _logger.LogInformation($"Search term was invalid: {searchTerm}");
-            return null;
+            var user = _context.Users.Search(searchTerm);
+
+            return user.Select(u => UserResponse.FromUser(u)).ToList();
         }
 
+        public async Task<UserResponse> UpdateUserAsync(Guid id, CreateUserRequest updatedUser)
+        {
+            var user = await _context.Users.FindAsync(id);
+
+            if (user == null)
+            {
+                _logger.LogWarning($"User with ID {id} not found for update.");
+            }
+            user = new User
+            {
+                FirstName = updatedUser.FirstName,
+                LastName = updatedUser.LastName,
+                PhoneNumber = updatedUser.PhoneNumber,
+            };
+             _context.Users.Update(user);
+             await _context.SaveChangesAsync();
+
+             _logger.LogInformation($"Updated user with ID {id}.");
+             return UserResponse.FromUser(user);
+        }
+
+        //will implement this later
+        public Task<UserProfileResponse?> GetUserProfileAsync(Guid userId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
