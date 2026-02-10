@@ -4,7 +4,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data
 {
-    public class QrDbContext : DbContext
+    public interface IOrderDbContext
+    {
+        DbSet<Context> Contexts { get; set; }
+        DbSet<ContextPart> ContextParts { get; set; }
+        DbSet<Payment> Payments { get; set; }
+        DbSet<User> Users { get; set; }
+        DbSet<Product> Products { get; set; }
+        DbSet<UserTab> UserTabs { get; set; }
+        DbSet<Transaction> Transactions { get; set; }
+        DbSet<Owner> Owners { get; set; }
+
+    }
+
+    public class QrDbContext : DbContext, IOrderDbContext
     {
         public QrDbContext(DbContextOptions<QrDbContext> options) : base(options)
         {

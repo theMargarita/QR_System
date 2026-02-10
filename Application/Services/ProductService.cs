@@ -1,25 +1,27 @@
 ﻿using Application.DTOs.ProductFolder;
 using Application.IServices;
-using Domain.IRepositories;
 using Domain.Models;
+using Infrastructure.Data;
+using Infrastructure.Extensions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+
 
 namespace Application.Services
 {
     public class ProductService : IProductService
     {
-
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly ILogger<UserService> _logger;
-        public ProductService(IUnitOfWork unitOfWork, ILogger<UserService> logger)
+        private readonly QrDbContext _context;
+        private readonly ILogger _logger;
+        public ProductService(ILogger<ProductService> logger, QrDbContext context)
         {
-            _unitOfWork = unitOfWork;
             _logger = logger;
+            _context = context;
         }
 
         public async Task<ProductResponse> CreateProductAsync(ProductRequest request)
         {
-            var item = new Product
+            var product = new Product
             {
                 Name = request.Name,
                 Description = request.Description,
@@ -28,66 +30,55 @@ namespace Application.Services
                 Status = request.Status
             };
 
-            await _unitOfWork.Products.CreateAsync(item);
-            await _unitOfWork.SaveChangesAsync();
+            _context.Products.Add(product);
 
-            return new ProductResponse
-            {
-                Id = item.Id,
-                Name = item.Name,
-                Description = item.Description,
-                Price = item.Price,
-                Category = item.Category,
-                Status = item.Status
-            };
+            await _context.SaveChangesAsync();
+
+            return ProductResponse.FromProduct(product);
+
+
         }
 
         public async Task DeleteProductAsync(int id)
         {
-            var item = await _unitOfWork.Products.GetByIdAsync(id);
-            if (item == null)
+            var query = await _context.Products.FindAsync(id);
+
+            if (query == null)
             {
-                _logger.LogWarning("Attempted to delete non-existent product with ID {ProductId}", id);
+                _logger.LogWarning($"Attempted to delete non-existent product with ID {id}");
                 return;
             }
 
-            await _unitOfWork.Products.DeleteAsync(item.Id);
-            await _unitOfWork.SaveChangesAsync();
+            _context.Products.Remove(query);
+
+            await _context.SaveChangesAsync();
             _logger.LogInformation($"Product now deleted with ID {id}");
         }
 
-        public async Task<IEnumerable<ProductResponse>> GetActiveProductsAsync()
-        {
-            var products = await _unitOfWork.Products.GetActiveProductsAsync();
-            return products.Select(p => new ProductResponse
-            {
-                Id = p.Id,
-                Name = p.Name,
-                Description = p.Description,
-                Price = p.Price,
-                Category = p.Category,
-                Status = p.Status
-            });
-        }
+        public async Task<IEnumerable<ProductResponse>> GetActiveProductsAsync() => await _context.Products
+            .ActiveProducts()
+            .Select(x => ProductResponse.FromProduct(x))
+            .ToListAsync();
 
         public async Task<IEnumerable<ProductResponse>> GetAllProductsAsync()
         {
-            var items = await _unitOfWork.Products.GetAllAsync();
 
-            return items.Select(p => new ProductResponse
-            {
-                Id = p.Id,
-                Name = p.Name,
-                Description = p.Description,
-                Price = p.Price,
-                Category = p.Category,
-                Status = p.Status
-            });
+            return await _context.Products
+                .Select(p => new ProductResponse
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Description = p.Description,
+                    Price = p.Price,
+                    Category = p.Category,
+                    Status = p.Status
+                }).ToListAsync();
         }
 
+        //vet faktiskt inte om denna är relevant men kan ha kvar den ändå
         public async Task<ProductResponse> GetProductByIdAsync(int id)
         {
-            var item = await _unitOfWork.Products.GetByIdAsync(id);
+            var item = await _context.Products.FindAsync(id);
 
             if (item == null)
             {
@@ -108,7 +99,7 @@ namespace Application.Services
 
         public async Task UpdateProductAsync(int id, ProductRequest request)
         {
-            var item = await _unitOfWork.Products.GetByIdAsync(id);
+            var item = await _context.Products.FindAsync(id);
 
             if (item == null)
             {
@@ -116,8 +107,9 @@ namespace Application.Services
                 return;
             }
 
-            var updatedItem = await _unitOfWork.Products.UpdateAsync(new Product
+            var updatedItem = _context.Products.Update(new Product
             {
+                Id = id,
                 Name = request.Name,
                 Description = request.Description,
                 Price = request.Price,
@@ -125,39 +117,22 @@ namespace Application.Services
                 Status = request.Status
             });
 
-            await _unitOfWork.SaveChangesAsync();
             _logger.LogInformation($"Product with ID {id} updated successfully");
-
-            //not sure about this
-             new ProductResponse
-            {
-                Id = updatedItem.Id,
-                Name = updatedItem.Name,
-                Description = updatedItem.Description,
-                Price = updatedItem.Price,
-                Category = updatedItem.Category,
-                Status = updatedItem.Status
-            };
         }
         public async Task<IEnumerable<ProductResponse>> SearchProductAsync(string searchTerm)
         {
-            if (string.Equals(searchTerm.ToLower(), searchTerm.ToUpper(), StringComparison.OrdinalIgnoreCase))
-            {
-                var item = await _unitOfWork.Products.SearchProduct(searchTerm);
+            StringHelper.Normalize(searchTerm);
 
-                return item.Select(p => new ProductResponse
-                {
-                    Id = p.Id,
-                    Name = p.Name,
-                    Description = p.Description,
-                    Price = p.Price,
-                    Category = p.Category,
-                    Status = p.Status
-                });
+            if (searchTerm == null || string.IsNullOrWhiteSpace(searchTerm))
+            {
+                _logger.LogWarning($"Search term is invalid: {searchTerm}");
+                return null;
             }
 
-            _logger.LogWarning($"Search term is invalid: {searchTerm}");
-            return null;
+            return await _context.Products
+                 .SearchProduct(searchTerm)
+                 .Select(p => ProductResponse.FromProduct(p))
+                 .ToListAsync();
         }
     }
 }
