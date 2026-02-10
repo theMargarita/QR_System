@@ -5,7 +5,7 @@ namespace Domain.Models
     public class User
     {
         //public int Id { get; set; }
-        public int Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         [Required]
         public string FirstName { get; set; } = string.Empty;
@@ -13,9 +13,10 @@ namespace Domain.Models
         [Required]
         public string LastName { get; set; } = string.Empty;
 
+        public string FullName => FirstName + LastName;
         public string? PhoneNumber { get; set; }
         //public int TaleId { get; set; } //ContextPart?
-        public DateTime CreatedAt { get; set; } 
+        public DateTime CreatedAt { get; set; }
 
         //navigatio propery - many to many
         public ICollection<UserTab>? Tabs { get; set; } // är användar nota ? 

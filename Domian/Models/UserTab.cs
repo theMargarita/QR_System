@@ -4,14 +4,14 @@ namespace Domain.Models
 {
     public class UserTab //användar nota
     {
-        public int Id { get; set; }
-        public int UserId { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
+        public Guid UserId { get; set; }
         public int ContextId { get; set; }
         public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
         public DateTimeOffset ClosedAt { get; set; } = DateTimeOffset.UtcNow;
         public TabStatus Status { get; set; }
 
-        public int? OwnerId { get; set; }
+        public Guid? OwnerId { get; set; }
         public int? ContextPartId { get; set; }
 
         //navgation property
