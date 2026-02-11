@@ -21,5 +21,16 @@ namespace Infrastructure.Extensions
                             p.Category!.Contains(searchTerm))
                 .OrderBy(p => p.Name);
         }
+        public static IQueryable<Product> Menu(this IQueryable<Product> query)
+        {
+            return query.Select(p => new Product
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Price = p.Price,
+                Description = p.Description,
+                Category = p.Category
+            });
+        }
     }
 }
