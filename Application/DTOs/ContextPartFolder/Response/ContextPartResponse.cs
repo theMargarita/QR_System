@@ -1,5 +1,4 @@
-﻿using Application.DTOs.UserTabFolder.UserTabResonse;
-using Domain.Models;
+﻿using Application.DTOs.UserTabFolder.Resonse;
 
 namespace Application.DTOs.CPFolder.Response
 {
