@@ -1,12 +1,13 @@
 ﻿using Application.DTOs.PaymentFolder;
 using Application.DTOs.TransactionFolder;
+using Domain.Models;
 
 namespace Application.DTOs.UserTabFolder.Resonse
 {
-    public class UserTabResponse
+    public record UserTabResponse
     {
-        public int Id { get; init; }
-        public int UserId { get; init; }
+        public Guid Id { get; init; }
+        public Guid UserId { get; init; }
         public string UserFullName { get; init; } = string.Empty;
         public int ContextId { get; init; }
         public string ContextName { get; init; } = string.Empty;
@@ -18,6 +19,21 @@ namespace Application.DTOs.UserTabFolder.Resonse
         public decimal RemainingAmount { get; init; }
         public bool IsPaid { get; init; }
         public IReadOnlyList<TransactionSummaryResponse>? Transactions { get; init; }
-        public IReadOnlyList<PaymentSummaryResponse>? Payments{ get; init; }
+        public IReadOnlyList<PaymentSummaryResponse>? Payments { get; init; }
+
+        public static UserTabResponse FromUserTab(UserTab tab)
+        {
+            return new UserTabResponse
+            {
+                Id = tab.Id,
+                UserId = tab.UserId,
+                UserFullName = $"{tab.User?.FirstName} {tab.User?.LastName}".Trim(),
+                ContextId = tab.ContextId,
+                ContextName = tab.ContextPart?.Name ?? string.Empty,
+                Status = tab.Status.ToString(),
+                CreatedAt = tab.CreatedAt,
+                ClosedAt = tab.ClosedAt,
+            };
+        }
     }
 }
