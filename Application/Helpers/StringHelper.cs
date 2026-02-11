@@ -1,4 +1,4 @@
-﻿namespace Application.Services
+﻿namespace Application.Helpers
 {
 
     public static class StringHelper
