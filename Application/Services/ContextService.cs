@@ -32,7 +32,7 @@ namespace Application.Services
                 Name = newContext.Name,
                 QrToken = newContext.QrToken,
                 OwnerId = newContext.OwnerId,
-                ContextPartIsUnique = newContext.ContextPartIsUnique //??? - this is a bool - might be to much
+                //ContextPartIsUnique = newContext.ContextPartIsUnique //??? - this is a bool - might be to much
             };
 
             _context.Contexts.Add(addItem);
