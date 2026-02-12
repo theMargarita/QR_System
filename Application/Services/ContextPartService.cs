@@ -1,8 +1,6 @@
-﻿using Application.DTOs.ContextFolder.Response;
-using Application.DTOs.ContextPartFolder.Request;
+﻿using Application.DTOs.ContextPartFolder.Request;
 using Application.DTOs.CPFolder.Response;
 using Application.IServices;
-using Domian.Models;
 using Infrastructure.Data;
 using Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
@@ -28,33 +26,33 @@ namespace Application.Services
             throw new NotImplementedException();
         }
 
-        public async Task<ContextPartResponse?> CreateContextPartAsync(CreateContexPartRequest request)
-        {
-            // Generate a unique QR token
-            var uniqueQrToken = GenerateUniqueQRToken();
+        //public async Task<ContextPartResponse?> CreateContextPartAsync(CreateContexPartRequest request)
+        //{
+        //    // Generate a unique QR token
+        //    var uniqueQrToken = GenerateUniqueQRToken();
 
-            var context = await _context.Contexts.FindAsync(request.ContextId);
+        //    var context = await _context.Contexts.FindAsync(request.ContextId);
 
-            if (context == null)
-            {
-                _logger.LogWarning($"Context with ID {request.ContextId} not found.");
-            }
+        //    if (context == null)
+        //    {
+        //        _logger.LogWarning($"Context with ID {request.ContextId} not found.");
+        //    }
 
-            var newPart = new ContextPart
-            {
-                Name = request.Name,
-                QrToken = uniqueQrToken,
-                IsActive = request.IsActive,
-                Context = context
-            };
+        //    var newPart = new ContextPart
+        //    {
+        //        Name = request.Name,
+        //        QrToken = uniqueQrToken,
+        //        IsActive = request.IsActive,
+        //        Context = context
+        //    };
 
-            var qrCodeImage = _qrCodeService.GenerateQrCode(uniqueQrToken);
+        //    var qrCodeImage = _qrCodeService.GenerateQrCode(uniqueQrToken);
 
-            _context.ContextParts.Add(newPart);
-            await _context.SaveChangesAsync();
+        //    _context.ContextParts.Add(newPart);
+        //    await _context.SaveChangesAsync();
 
-            return ContextPartResponse.FromEntity(newPart);
-        }
+        //    return ContextPartResponse.FromEntity(newPart);
+        //}
 
         public string GenerateUniqueQRToken()
         {
@@ -155,6 +153,21 @@ namespace Application.Services
 
             _logger.LogInformation($"Successfully removed ContextPart with ID: {contextPartId}");
             return true;
+        }
+
+        public Task<ContextPartResponse?> GetOrCreateActiveTabAsync(Guid cpId, Guid userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ContextPartResponse?> ScanQrTokenAsync(string qrToken, Guid userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ContextPartResponse?> CreateContextPartAsync(CreateContexPartRequest request)
+        {
+            throw new NotImplementedException();
         }
     }
 }
