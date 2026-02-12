@@ -1,4 +1,4 @@
-﻿using Domian.Models;
+﻿using Domain.Models;
 
 namespace Domain.Models
 {

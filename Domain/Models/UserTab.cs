@@ -1,4 +1,4 @@
-﻿using Domian.Models;
+﻿using Domain.Models;
 
 namespace Domain.Models
 {
@@ -12,7 +12,7 @@ namespace Domain.Models
         public TabStatus Status { get; set; }
 
         public Guid? OwnerId { get; set; }
-        public int? ContextPartId { get; set; }
+        public Guid? ContextPartId { get; set; }
 
         //navgation property
         public ContextPart? ContextPart { get; set; }

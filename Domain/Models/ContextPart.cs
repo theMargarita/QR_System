@@ -1,6 +1,6 @@
 ﻿using Domain.Models;
 
-namespace Domian.Models
+namespace Domain.Models
 {
     public class ContextPart //ex, sven svensson - eller bord 11
     {

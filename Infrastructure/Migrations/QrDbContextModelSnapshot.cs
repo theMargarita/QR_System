@@ -232,7 +232,7 @@ namespace Infrastructure.Migrations
                     b.ToTable("usertabs");
                 });
 
-            modelBuilder.Entity("Domian.Models.ContextPart", b =>
+            modelBuilder.Entity("Domain.Models.ContextPart", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -314,7 +314,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Models.UserTab", b =>
                 {
-                    b.HasOne("Domian.Models.ContextPart", "ContextPart")
+                    b.HasOne("Domain.Models.ContextPart", "ContextPart")
                         .WithMany("UserTabs")
                         .HasForeignKey("ContextPartId1")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -330,7 +330,7 @@ namespace Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Domian.Models.ContextPart", b =>
+            modelBuilder.Entity("Domain.Models.ContextPart", b =>
                 {
                     b.HasOne("Domain.Models.Context", "Context")
                         .WithMany("Parts")
@@ -361,7 +361,7 @@ namespace Infrastructure.Migrations
                     b.Navigation("Transactions");
                 });
 
-            modelBuilder.Entity("Domian.Models.ContextPart", b =>
+            modelBuilder.Entity("Domain.Models.ContextPart", b =>
                 {
                     b.Navigation("UserTabs");
                 });
