@@ -87,15 +87,7 @@ namespace Application.Services
                 return null;
             }
 
-            return new ProductResponse
-            {
-                Id = item.Id,
-                Name = item.Name,
-                Description = item.Description,
-                Price = item.Price,
-                Category = item.Category,
-                Status = item.Status
-            };
+            return ProductResponse.FromProduct(item);
         }
 
         public async Task UpdateProductAsync(int id, ProductRequest request)

@@ -1,4 +1,5 @@
-﻿using Domian.Models;
+﻿using Domain.Models;
+using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Extensions
@@ -9,26 +10,34 @@ namespace Infrastructure.Extensions
         {
             return query.Include(cp => cp.Context)
                 .Include(cp => cp.UserTabs)
-                .Where(x => x.QrToken == qrToken)
-                .Where(cp => cp.IsActive);
+                .Where(x => x.QrToken == qrToken && x.IsActive == true);
         }
 
-        public static IQueryable<ContextPart> CheckTables(this IQueryable<ContextPart> query, int contextId)
+        public static IQueryable<ContextPart> QrTokenExist(this IQueryable<ContextPart> query, string qrToken)
         {
-            return query.Where(cp => cp.IsActive && cp.UserTabs
-                .Any(ut => !ut.IsClosed))
-                .Include(cp => cp.UserTabs
-                .Where(ut => !ut.IsClosed));
+            return query.Where(cp => cp.QrToken == qrToken && cp.IsActive);
         }
 
-        //public static IQueryable<ContextPart> WithContext(this IQueryable<ContextPart> query, Guid cpId)
+        public static IQueryable<ContextPart> CheckTables(this IQueryable<ContextPart> query)
+        {
+            return query
+                .Include(cp => cp.UserTabs
+                .Where(ut => !ut.IsClosed))
+                .Where(cp => cp.IsActive && cp.UserTabs
+                .Any(ut => !ut.IsClosed));
+        }
+
+        //public static IQueryable<ContextPart> CheckTables(this IQueryable<ContextPart> query, Guid cpId, Guid userId)
         //{
         //    return query.Where(cp => cp.Id == cpId)
-        //       .Select(cp => cp.UserTabs)
-        //       .Where(ut => !ut.)
-        //       .Select(ut => ut.UserId)
-        //       .Distinct()
-        //       .CountAsync().Result > 0;
+        //        .SelectMany(cp => cp.UserTabs)
+        //        .Where(ut => ut.UserId == userId && !ut.IsClosed)
+        //        .Select(ut => new
+        //        {
+        //            ut.ContextId,
+        //            ut.ContextPartId,
+        //            ut.ContextPart
+        //        })
         //}
 
         //public static IQueryable<ContextPart> UserHasActiveTabAsync(this IQueryable<ContextPart> query, Guid contextPartId, Guid userId)

@@ -14,9 +14,9 @@ namespace Application.Services
     {
         private readonly QrDbContext _context;
         private readonly ILogger<UserService> _logger;
-        private readonly QrCodeService _qrCodeService;
+        private readonly IQrCodeService _qrCodeService;
 
-        public ContextService(ILogger<UserService> logger, QrDbContext context, QrCodeService qrCodeService)
+        public ContextService(ILogger<UserService> logger, QrDbContext context, IQrCodeService qrCodeService)
         {
             _logger = logger;
             _context = context;

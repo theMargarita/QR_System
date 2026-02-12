@@ -14,13 +14,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.12" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.12" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.12" />
     <PackageReference Include="QRCoder" Version="1.7.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Domian\Domain.csproj" />
+    <ProjectReference Include="..\Domain\Domain.csproj" />
+    <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

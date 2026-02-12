@@ -1,7 +1,4 @@
-﻿using Domain.IRepositories;
-using Domain.Models;
-using Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
+﻿using Domain.Models;
 
 namespace Infrastructure.Extensions
 {
