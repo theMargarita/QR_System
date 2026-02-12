@@ -20,6 +20,7 @@ namespace Application.Services
         public byte[] GenerateQrCode(string qrText, int pixelSize = 300)
         {
             string url = GetQRCodeUrl(qrText);
+            var logoPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "DClogo.png");
 
             //generate a random color
             Color qrColor = GenerateRadomColor();
@@ -28,11 +29,26 @@ namespace Application.Services
             using (QRCodeData qrCodeData = qrGenerator.CreateQrCode(url, QRCodeGenerator.ECCLevel.Q))
             using (QRCode qrCode = new QRCode(qrCodeData))
             using (Bitmap qrCodeImage = qrCode.GetGraphic(20, qrColor, Color.White, true)) //is only supported on windows - might be a probler later on
-            using (MemoryStream ms = new MemoryStream()) //Streams måste stängas annars låser de minne
             {
-                //qrCodeImage.Save(ms, ImageFormat.Png);
+                // Lägg till logo i mitten om den finns
+                if (!string.IsNullOrEmpty(logoPath) && File.Exists(logoPath))
+                {
+                    using (Bitmap logo = new Bitmap(logoPath))
+                    using (Graphics graphics = Graphics.FromImage(qrCodeImage))
+                    {
+                        int logoSize = qrCodeImage.Width / 5;
+                        int logoX = (qrCodeImage.Width - logoSize) / 2;
+                        int logoY = (qrCodeImage.Height - logoSize) / 2;
 
-                return ms.ToArray();//(array av bytes) istället för en fil på disk
+                        graphics.DrawImage(logo, logoX, logoY, logoSize, logoSize);
+                    }
+                }
+                using (MemoryStream ms = new MemoryStream()) //Streams måste stängas annars låser de minne
+                {
+                    //qrCodeImage.Save(ms, ImageFormat.Png);
+
+                    return ms.ToArray();//(array av bytes) istället för en fil på disk
+                }
             }
         }
 
