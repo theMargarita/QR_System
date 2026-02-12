@@ -196,5 +196,14 @@ namespace Application.Services
 
             return ContextPartResponse.FromEntity(contextPart);
         }
+        public async Task<IEnumerable<ContextPartResponse>> GetAllContextPartsAsync(Guid contextId)
+        {
+            var contextParts = await _context.ContextParts
+                .Where(cp => cp.Id == contextId)
+                .Include(cp => cp.UserTabs.Where(ut => ut.Status == TabStatus.Open))
+                .ToListAsync();
+
+            return contextParts.Select(cp => ContextPartResponse.FromEntity(cp));
+        }
     }
 }
