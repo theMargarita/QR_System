@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QR_System", "QR_System\QR_S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\Application.csproj", "{AE6806EF-66A0-4B93-8796-AA2C7C40DCCF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domian\Domain.csproj", "{ED6DA9EA-AAE4-4CEE-A1F9-76DAF58B04EE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{ED6DA9EA-AAE4-4CEE-A1F9-76DAF58B04EE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{8F0257F3-F3A5-4CFB-95E4-7685494A0B54}"
 EndProject

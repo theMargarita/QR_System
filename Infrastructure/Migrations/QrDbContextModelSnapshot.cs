@@ -41,8 +41,8 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("OwnerId")
-                        .HasColumnType("integer");
+                    b.Property<Guid?>("OwnerId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("QrToken")
                         .HasColumnType("text");
@@ -52,41 +52,13 @@ namespace Infrastructure.Migrations
                     b.HasIndex("OwnerId");
 
                     b.ToTable("contexts");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            ContextPartIsUnique = true,
-                            IsActive = false,
-                            Name = "Ölkyl",
-                            OwnerId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            ContextPartIsUnique = true,
-                            IsActive = false,
-                            Name = "Bar",
-                            OwnerId = 1
-                        },
-                        new
-                        {
-                            Id = 3,
-                            ContextPartIsUnique = true,
-                            IsActive = false,
-                            Name = "Restaurang",
-                            OwnerId = 1
-                        });
                 });
 
             modelBuilder.Entity("Domain.Models.Owner", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -95,27 +67,13 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("owners");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Digital Creation"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Margo's the owner"
-                        });
                 });
 
             modelBuilder.Entity("Domain.Models.Payment", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("numeric");
@@ -129,11 +87,11 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Note")
                         .HasColumnType("text");
 
-                    b.Property<int?>("TabId")
-                        .HasColumnType("integer");
+                    b.Property<Guid?>("TabId")
+                        .HasColumnType("uuid");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("integer");
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -159,11 +117,6 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
@@ -172,94 +125,19 @@ namespace Infrastructure.Migrations
                         .HasColumnType("numeric");
 
                     b.Property<int>("Status")
+                        .HasMaxLength(500)
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
                     b.ToTable("products");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Description = "",
-                            ImageUrl = "",
-                            Name = "Coca Cola",
-                            Price = 25.0m,
-                            Status = 0
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Description = "",
-                            ImageUrl = "",
-                            Name = "Öl",
-                            Price = 20.0m,
-                            Status = 0
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Description = "",
-                            ImageUrl = "",
-                            Name = "Röd vin",
-                            Price = 22.0m,
-                            Status = 0
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Description = "",
-                            ImageUrl = "",
-                            Name = "Sprite",
-                            Price = 18.0m,
-                            Status = 0
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Description = "",
-                            ImageUrl = "",
-                            Name = "Water",
-                            Price = 10.0m,
-                            Status = 0
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Description = "",
-                            ImageUrl = "",
-                            Name = "Pizza",
-                            Price = 30.0m,
-                            Status = 0
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Description = "",
-                            ImageUrl = "",
-                            Name = "Pasta",
-                            Price = 28.0m,
-                            Status = 0
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Description = "",
-                            ImageUrl = "",
-                            Name = "Salad",
-                            Price = 15.0m,
-                            Status = 0
-                        });
                 });
 
             modelBuilder.Entity("Domain.Models.Transaction", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -273,14 +151,11 @@ namespace Infrastructure.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
-                    b.Property<int>("TabId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("TabId")
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
-
-                    b.Property<int?>("UserId1")
-                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -288,18 +163,16 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TabId");
 
-                    b.HasIndex("UserId1");
+                    b.HasIndex("UserId");
 
                     b.ToTable("transactions");
                 });
 
             modelBuilder.Entity("Domain.Models.User", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -322,11 +195,9 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Models.UserTab", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset>("ClosedAt")
                         .HasColumnType("timestamp with time zone");
@@ -337,34 +208,35 @@ namespace Infrastructure.Migrations
                     b.Property<int?>("ContextPartId")
                         .HasColumnType("integer");
 
+                    b.Property<Guid?>("ContextPartId1")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int?>("OwnerId")
-                        .HasColumnType("integer");
+                    b.Property<Guid?>("OwnerId")
+                        .HasColumnType("uuid");
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ContextPartId");
+                    b.HasIndex("ContextPartId1");
 
                     b.HasIndex("UserId");
 
                     b.ToTable("usertabs");
                 });
 
-            modelBuilder.Entity("Domian.Models.ContextPart", b =>
+            modelBuilder.Entity("Domain.Models.ContextPart", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<int?>("ContextId")
                         .HasColumnType("integer");
@@ -429,8 +301,9 @@ namespace Infrastructure.Migrations
 
                     b.HasOne("Domain.Models.User", "User")
                         .WithMany("Transactions")
-                        .HasForeignKey("UserId1")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Product");
 
@@ -441,9 +314,9 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Models.UserTab", b =>
                 {
-                    b.HasOne("Domian.Models.ContextPart", "ContextPart")
+                    b.HasOne("Domain.Models.ContextPart", "ContextPart")
                         .WithMany("UserTabs")
-                        .HasForeignKey("ContextPartId")
+                        .HasForeignKey("ContextPartId1")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Models.User", "User")
@@ -457,7 +330,7 @@ namespace Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Domian.Models.ContextPart", b =>
+            modelBuilder.Entity("Domain.Models.ContextPart", b =>
                 {
                     b.HasOne("Domain.Models.Context", "Context")
                         .WithMany("Parts")
@@ -488,7 +361,7 @@ namespace Infrastructure.Migrations
                     b.Navigation("Transactions");
                 });
 
-            modelBuilder.Entity("Domian.Models.ContextPart", b =>
+            modelBuilder.Entity("Domain.Models.ContextPart", b =>
                 {
                     b.Navigation("UserTabs");
                 });

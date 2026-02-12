@@ -1,12 +1,14 @@
 ﻿using Application.DTOs.PaymentFolder;
 using Application.DTOs.TransactionFolder;
-using Application.DTOs.UserTabFolder;
+using Application.DTOs.UserTabFolder.AdminTabFolder;
+using Domain.Models;
+using System.Transactions;
 
 namespace Application.DTOs.UserFolder.Response
 {
     public record UserProfileResponse
     {
-        public int Id { get; init; }
+        public Guid Id { get; init; }
         public string FirstName { get; init; } = string.Empty;
         public string LastName { get; init; } = string.Empty;
         public string FullName => $"{FirstName} {LastName}";
@@ -14,7 +16,7 @@ namespace Application.DTOs.UserFolder.Response
         public DateTime CreatedAt { get; init; }
 
         // Aktiva tabs
-        public List<UserTabSummaryResponse> ActiveTabs { get; init; } = new();
+        public List<ActiveTabSummary> ActiveTabs { get; init; } = new();
 
         // Senaste transaktioner
         public List<TransactionSummaryResponse> RecentTransactions { get; init; } = new();
@@ -25,5 +27,42 @@ namespace Application.DTOs.UserFolder.Response
         // Statistik
         public decimal TotalSpent { get; init; }
         //public decimal CurrentOwed { get; init; }? // Kan läggas till om nödvändigt
+       //public static UserProfileResponse FromUser(User user)
+       // {
+       //     return new UserProfileResponse
+       //     {
+       //         Id = user.Id,
+       //         FirstName = user.FirstName,
+       //         LastName = user.LastName,
+       //         PhoneNumber = user.PhoneNumber,
+       //         CreatedAt = user.CreatedAt,
+
+       //         ActiveTabs = user.Tabs?
+       //             .Where(t => t.Status == TabStatus.Open)
+       //             .Select(t => new ActiveTabSummary
+       //             {
+       //                 TabId = t.Id,
+       //                 CreatedAt = t.CreatedAt,
+       //                 // Andra properties...
+       //             })
+       //             .ToList() ?? new List<ActiveTabSummary>(),
+
+       //         RecentTransactions = user.Transactions?
+       //             .OrderByDescending(t => t.CreatedAt)
+       //             .Take(10)
+       //             .Select(TransactionSummaryResponse.FromTransaction)
+       //             .ToList() ?? new List<TransactionSummaryResponse>(),
+
+       //         RecentPayments = user.Payments?
+       //             .OrderByDescending(p => p.Amount)
+       //             .Take(10)
+       //             .Select(PaymentSummaryResponse.FromPayment)
+       //             .ToList() ?? new List<PaymentSummaryResponse>(),
+
+       //         TotalSpent = user.Transactions?
+       //             .Where(t => t.Status == TransactionStatus.Completed)
+       //             .Sum(t => t.TotalAmount) ?? 0
+       //     };
+       // }
     }
 }

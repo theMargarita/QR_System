@@ -1,8 +1,5 @@
 ﻿using Application.DTOs.ContextPartFolder.Request;
-using Application.DTOs.CPFolder.Response;
 using Application.IServices;
-using Application.Services;
-using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace QR_System.Controllers
@@ -62,15 +59,15 @@ namespace QR_System.Controllers
         //    return File(qrBytes, "image/png", $"QR_{context.Name}.png");
         //}
 
-        [HttpGet("GetContextPartId/{contextPartId}")]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<ContextPartResponse>> GetContextPartById(int context)
-        {
+        //[HttpGet("GetContextPartId/{contextPartId}")]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //public async Task<ActionResult<ContextPartResponse>> GetContextPartById(int context)
+        //{
 
 
-            return Ok(await _contextPartService.IsContextPartOccupiedAsync(context));
-        }
+        //    return Ok(await _contextPartService.(context));
+        //}
 
     }
 }

@@ -1,8 +1,6 @@
 using Application.IServices;
 using Application.Services;
-using Domain.IRepositories;
 using Infrastructure.Data;
-using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace QR_System
@@ -16,15 +14,14 @@ namespace QR_System
             // Logging
             builder.Services.AddLogging();
 
-            // Repositories
-            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
             // Services
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IQrCodeService, QrCodeService>();
             builder.Services.AddScoped<IContextService, ContextService>();
             builder.Services.AddScoped<IContextPartService, ContextPartService>();
             builder.Services.AddScoped<IProductService, ProductService>();
+            builder.Services.AddScoped<ITransactionService, TransactionService>();
+            //builder.Services.AddScoped<IUserTabService, UserTabService>();
 
             // Controllers
             builder.Services.AddControllers();
