@@ -1,6 +1,7 @@
 ﻿using Application.DTOs.ContextPartFolder.Request;
 using Application.DTOs.CPFolder.Response;
 using Application.IServices;
+using Domain.Models;
 using Infrastructure.Data;
 using Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
@@ -26,33 +27,40 @@ namespace Application.Services
             throw new NotImplementedException();
         }
 
-        //public async Task<ContextPartResponse?> CreateContextPartAsync(CreateContexPartRequest request)
-        //{
-        //    // Generate a unique QR token
-        //    var uniqueQrToken = GenerateUniqueQRToken();
+        public async Task<ContextPartResponse?> CreateContextPartAsync(CreateContexPartRequest request)
+        {
+            var context = await _context.Contexts.FindAsync(request.ContextId);
+            if (context == null)
+            {
+                _logger.LogWarning($"Context with ID {request.ContextId} not found.");
+                return null;
+            }
 
-        //    var context = await _context.Contexts.FindAsync(request.ContextId);
+            // Generate a unique QR token
+            var uniqueQrToken = GenerateUniqueQRToken();
 
-        //    if (context == null)
-        //    {
-        //        _logger.LogWarning($"Context with ID {request.ContextId} not found.");
-        //    }
+            var qrCodeImage = _qrCodeService.GenerateQrCode(uniqueQrToken); //create QR code image based on the token
+            if (qrCodeImage == null)
+            {
+                _logger.LogError("Failed to generate QR code image.");
+                return null;
+            }
 
-        //    var newPart = new ContextPart
-        //    {
-        //        Name = request.Name,
-        //        QrToken = uniqueQrToken,
-        //        IsActive = request.IsActive,
-        //        Context = context
-        //    };
+            var newPart = new ContextPart
+            {
+                Name = request.Name,
+                QrToken = uniqueQrToken,
+                IsActive = request.IsActive,
+                Context = context
+            };
 
-        //    var qrCodeImage = _qrCodeService.GenerateQrCode(uniqueQrToken);
+            _context.ContextParts.Add(newPart);
+            await _context.SaveChangesAsync();
 
-        //    _context.ContextParts.Add(newPart);
-        //    await _context.SaveChangesAsync();
+            _logger.LogInformation($"Created new ContextPart with ID: {newPart.Id} and QR Token: {newPart.QrToken}");
 
-        //    return ContextPartResponse.FromEntity(newPart);
-        //}
+            return ContextPartResponse.FromEntity(newPart);
+        }
 
         public string GenerateUniqueQRToken()
         {
@@ -72,7 +80,7 @@ namespace Application.Services
             var count = _context.ContextParts.Where(cp => cp.Id == contextPartId)
                 .SelectMany(cp => cp.UserTabs)
                 .Where(ut => !ut.IsClosed)
-                .CountAsync(); 
+                .CountAsync();
 
             if (count == null)
             {
@@ -83,44 +91,35 @@ namespace Application.Services
             return await count;
         }
 
-        public async Task<ContextPartResponse?> GetOrCreateActiveTabAsync(/*Guid cpId, Guid userId*/)
-        {
-            throw new NotImplementedException();
-        }
-        //  scanning QR code => go to contextpart dashboard => choose products => add to order == transaction added to usertab 
         public async Task<ContextPartResponse?> ScanQrTokenAsync(string qrToken)
         {
-            // Log the incoming request for better traceability
+            _logger.LogInformation($"Scanning QR token: {qrToken}");
+
             var contextPart = _context.ContextParts.QrTokenExist(qrToken).FirstOrDefaultAsync();
+
             _logger.LogInformation($"Scanning QR token: {qrToken}. ContextPart found: {contextPart != null}");
 
-            //create or get an active tab 
-            var activeTab = await GetOrCreateActiveTabAsync();
-
-            //return await ContextPartResponse.FromEntity(activeTab);
-
-            return null;
-        }
-
-        public async Task<ContextPartResponse?> GetUserActiveTabAsync(Guid contextPartId, Guid userId)
-        {
-            var activeTab = _context.ContextParts
-                .Where(cp => cp.Id == contextPartId)
-                .SelectMany(cp => cp.UserTabs)
-                .Where(ut => ut.UserId == userId && !ut.IsClosed)
-                .Select(ut => new
-                {
-                    ut.ContextId,
-                    ut.ContextPartId,
-                    ut.ContextPart
-                })
-                .ToListAsync();
-
+            //return  ContextPartResponse.FromEntity(contextPart);
 
             return await _context.ContextParts
-                .Where(cp => cp.Id == contextPartId)
-                .Select(cp => ContextPartResponse.FromEntity(cp))
-                .FirstOrDefaultAsync();
+                    .Where(cp => cp.QrToken == qrToken)
+                    .Select(cp => ContextPartResponse.FromEntity(cp))
+                    .FirstOrDefaultAsync();
+        }
+
+        public async Task<int?> GetUserActiveTabAsync(Guid cpId)
+        {
+            var count = _context.UserTabs
+                .Where(ut => ut.ContextPartId == cpId && ut.Status == TabStatus.Open)
+                .CountAsync();
+
+            if (count == null)
+            {
+                _logger.LogError($"Failed to retrieve active tab count for ContextPart ID {cpId}");
+                return null;
+            }
+
+            return await count;
         }
 
         //tycker inte riktigt att denna är relevant
@@ -128,7 +127,7 @@ namespace Application.Services
         {
             //var table = await _context.ContextParts.FindAsync(contextPartId);
 
-           var check = _context.ContextParts.CheckTables();
+            var check = _context.ContextParts.CheckTables();
 
             if (check == null)
             {
@@ -141,7 +140,11 @@ namespace Application.Services
 
         public async Task<bool> RemoveContextPartAsync(Guid contextPartId)
         {
-            var id = await _context.ContextParts.FindAsync(contextPartId);
+            //var id = await _context.ContextParts.FindAsync(contextPartId);
+            var id = await _context.ContextParts
+                .Include(cp => cp.UserTabs)
+                .FirstOrDefaultAsync(cp => cp.Id == contextPartId);
+
             if (id == null)
             {
                 _logger.LogWarning($"Attempted to remove non-existent ContextPart with ID {contextPartId}");
@@ -155,19 +158,43 @@ namespace Application.Services
             return true;
         }
 
-        public Task<ContextPartResponse?> GetOrCreateActiveTabAsync(Guid cpId, Guid userId)
+        public async Task<ContextPartResponse?> UpdateContextPartAsync(Guid contextPartId, string newName)
+        {
+            var contextPart = await _context.ContextParts.FindAsync(contextPartId);
+
+            if (contextPart == null)
+            {
+                _logger.LogWarning($"ContextPart with ID {contextPartId} not found.");
+                return null;
+            }
+
+            contextPart.Name = newName;
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation($"Updated ContextPart {contextPartId} name to '{newName}'");
+
+            return ContextPartResponse.FromEntity(contextPart);
+        }
+
+        public async Task<ContextPartResponse?> GetOrCreateActiveTabAsync(Guid cpId, Guid userId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<ContextPartResponse?> ScanQrTokenAsync(string qrToken, Guid userId)
+        public async Task<ContextPartResponse> GetContextPartByIdAsync(Guid contextPartId)
         {
-            throw new NotImplementedException();
-        }
+            var contextPart = await _context.ContextParts
+               .Include(cp => cp.Context)
+               .Include(cp => cp.UserTabs.Where(ut => ut.Status == TabStatus.Open))
+               .FirstOrDefaultAsync(cp => cp.Id == contextPartId);
 
-        public Task<ContextPartResponse?> CreateContextPartAsync(CreateContexPartRequest request)
-        {
-            throw new NotImplementedException();
+            if (contextPart == null)
+            {
+                _logger.LogWarning($"ContextPart with ID {contextPartId} not found.");
+                return null;
+            }
+
+            return ContextPartResponse.FromEntity(contextPart);
         }
     }
 }

@@ -9,14 +9,15 @@ namespace Application.IServices
         Task<ContextPartResponse?> CreateContextPartAsync(CreateContexPartRequest request);
         Task<int> GetActiveUserCountAsync(Guid contextPartId);
         Task<ContextPartResponse?> GetOrCreateActiveTabAsync(Guid cpId, Guid userId);
-        
-        Task<ContextPartResponse?> ScanQrTokenAsync(string qrToken, Guid userId);
 
-       Task<ContextPartResponse?> GetUserActiveTabAsync(Guid contextPartId, Guid userId);
+        Task<ContextPartResponse?> ScanQrTokenAsync(string qrToken);
+
+        Task<int?> GetUserActiveTabAsync(Guid contextPartId);
 
         //tycker inte riktigt att denna är relevant
         Task<bool> CheckTable(int contextPartId);
 
-       Task<bool> RemoveContextPartAsync(Guid contextPartId);
+        Task<bool> RemoveContextPartAsync(Guid contextPartId);
+        Task<ContextPartResponse> GetContextPartByIdAsync(Guid contextPartId);
     }
 }
