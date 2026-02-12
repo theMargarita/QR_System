@@ -34,6 +34,17 @@ namespace QR_System
             builder.Services.AddDbContext<QrDbContext>(options =>
                 options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", p =>
+                {
+                    p.WithOrigins("http://localhost:")
+                     .AllowAnyMethod()
+                     .AllowAnyHeader();
+                });
+            });
+
             var app = builder.Build();
 
             // Middleware pipeline
@@ -44,10 +55,18 @@ namespace QR_System
             }
 
             app.UseHttpsRedirection();
+
+            app.UseDefaultFiles(); // Serve index.html by default
+            app.UseStaticFiles(); // Serve static files from wwwroot
+
+            app.UseCors("Default");
+
             app.UseAuthorization();
             app.MapControllers();
 
-            app.Run(); 
+            app.MapFallbackToFile("/index.html");
+
+            app.Run();
         }
     }
 }

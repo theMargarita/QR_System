@@ -1,5 +1,4 @@
 ﻿using Domain.Models;
-using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Extensions
@@ -40,14 +39,12 @@ namespace Infrastructure.Extensions
         //        })
         //}
 
-        //public static IQueryable<ContextPart> UserHasActiveTabAsync(this IQueryable<ContextPart> query, Guid contextPartId, Guid userId)
-        //{
-        //    return query
-        //      .Where(cp => cp.Id == contextPartId)
-        //      .Include(cp => cp.UserTabs)
-        //      .Select(cp => cp.UserTabs).
-
-        //}
+        public static IQueryable<ContextPart> ContextPart(this IQueryable<ContextPart> query)
+        {
+            return query.Include(cp => cp.Context)
+                .Include(cp => cp.UserTabs
+                .Where(ut => ut.Status == TabStatus.Open));
+        }
 
         //public static IQueryable<ContextPart> DashboardDetail(this IQueryable<ContextPart> query)
         //{
