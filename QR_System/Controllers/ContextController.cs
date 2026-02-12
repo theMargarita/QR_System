@@ -45,7 +45,7 @@ namespace QR_System.Controllers
 
         //not sure about this one
         [HttpGet("viewQr/{contextId}")]
-        public async Task<ContentResult> ViewQR(int contextId)
+        public async Task<ContentResult> ViewQR(Guid contextId)
         {
             var context = await _contextService.GetContextByIdAsync(contextId);
 
@@ -82,7 +82,7 @@ namespace QR_System.Controllers
 
         // this endpoint with be very usable!
         [HttpGet("downloadQr/{contextId}")]
-        public async Task<IActionResult> DownloadQR(int contextId)
+        public async Task<IActionResult> DownloadQR(Guid contextId)
         {
             var context = await _contextService.GetContextByIdAsync(contextId);
 
@@ -132,6 +132,6 @@ namespace QR_System.Controllers
 //for future inspiration
 
 //Task<ActionResult<ScanResponse>> ScanQR(string qrToken)
-//Task<ActionResult<ContextResponse>> GetContextDetails(int contextId)
+//Task<ActionResult<TableResponse>> GetContextDetails(int contextId)
 //Task<ActionResult<JoinResponse>> JoinContext(int contextId, JoinRequest request) - i think this one is relavent
 //Task<ActionResult> LeaveContext(int contextId, int userId)

@@ -25,10 +25,10 @@ namespace QR_System.Controllers
             return Ok(users);
         }
 
-        [HttpGet("phone/{phoneNumber}")]
-        public async Task<IActionResult> GetUserByPhone(string phoneNumber)
+        [HttpGet("search/{searchTerm}")]
+        public async Task<IActionResult> GetUserByPhone(string searchTerm)
         {
-            var user = await _userService.GetUserByPhoneAsync(phoneNumber);
+            var user = await _userService.SearchUsersAsync(searchTerm);
             if (user == null)
             {
                 return NotFound();
@@ -36,21 +36,6 @@ namespace QR_System.Controllers
             return Ok(user);
         }
 
-        //denna funkar men den är case sensitive 
-        [HttpGet("name/{name}")]
-        public async Task<IActionResult> GetUserByName(string name)
-        {
-
-            var user = await _userService.GetUserByNameAsync(name);
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-            return Ok(user);
-
-
-        }
 
         //this one works now as it should
         [HttpPost("CreateUser")]
@@ -69,7 +54,7 @@ namespace QR_System.Controllers
         [HttpDelete]
         [ProducesResponseType(typeof(CreateUserRequest), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> DeleteUser(int id)
+        public async Task<IActionResult> DeleteUser(Guid id)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
@@ -82,9 +67,25 @@ namespace QR_System.Controllers
 
             await _userService.RemoveUserAsync(id);
             return Ok($"User with id {id} has been deleted.");
+        }
 
+        //this one does not work 
+        [HttpPut("UpdateUser")]
+        [ProducesResponseType(typeof(CreateUserRequest), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UpdateUser(Guid id, [FromBody] CreateUserRequest updatedUser)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
+            var user = await _userService.GetUserByIdAsync(id);
 
+            if (user == null)
+            {
+                return NotFound($"Could not find the user with the Id: {id}");
+            }
+
+            await _userService.UpdateUserAsync(id, updatedUser);
+            return Ok($"User with id {id} has been updated.");
         }
     }
 }
