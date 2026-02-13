@@ -1,5 +1,6 @@
 ﻿using Application.DTOs.ContextPartFolder.Request;
 using Application.DTOs.CPFolder.Response;
+using Application.Helpers;
 using Application.IServices;
 using Domain.Models;
 using Infrastructure.Data;
@@ -13,12 +14,10 @@ namespace Application.Services
     {
         private readonly QrDbContext _context;
         private readonly ILogger _logger;
-        private readonly IQrCodeService _qrCodeService;
 
-        public ContextPartService(ILogger<ContextPartService> logger, IQrCodeService qrCodeService, QrDbContext context)
+        public ContextPartService(ILogger<ContextPartService> logger, QrDbContext context)
         {
             _logger = logger;
-            _qrCodeService = qrCodeService;
             _context = context;
         }
 
@@ -37,19 +36,19 @@ namespace Application.Services
             }
 
             // Generate a unique QR token
-            var uniqueQrToken = GenerateUniqueQRToken();
+            var qrToken = await QrGenerateHelper.GenerateUniqueForContextPart(_context);
 
-            var qrCodeImage = _qrCodeService.GenerateQrCode(uniqueQrToken); //create QR code image based on the token
-            if (qrCodeImage == null)
-            {
-                _logger.LogError("Failed to generate QR code image.");
-                return null;
-            }
-
+            //var qrCodeImage = _qrCodeService.GenerateQrCode(uniqueQrToken); //create QR code image based on the token
+            //if (qrCodeImage == null)
+            //{
+            //    _logger.LogError("Failed to generate QR code image.");
+            //    return null;
+            //}
             var newPart = new ContextPart
             {
+                //Id = Guid.NewGuid(),
                 Name = request.Name,
-                QrToken = uniqueQrToken,
+                QrToken = qrToken,
                 IsActive = request.IsActive,
                 Context = context
             };
@@ -95,16 +94,26 @@ namespace Application.Services
         {
             _logger.LogInformation($"Scanning QR token: {qrToken}");
 
-            var contextPart = _context.ContextParts.QrTokenExist(qrToken).FirstOrDefaultAsync();
+            var qr = _context.ContextParts.QrTokenExist(qrToken).FirstOrDefaultAsync();
+
+            var contextPart = await _context.ContextParts
+           .Include(cp => cp.Context)
+               .ThenInclude(c => c.Owner)
+           .Include(cp => cp.UserTabs.Where(ut => ut.Status == TabStatus.Open))
+           .FirstOrDefaultAsync(cp => cp.QrToken == qrToken && cp.IsActive);
 
             _logger.LogInformation($"Scanning QR token: {qrToken}. ContextPart found: {contextPart != null}");
 
-            //return  ContextPartResponse.FromEntity(contextPart);
+            if (contextPart == null)
+            {
+                _logger.LogWarning($"No active ContextPart found with token {qrToken}");
+                return null;
+            }
 
-            return await _context.ContextParts
-                    .Where(cp => cp.QrToken == qrToken)
-                    .Select(cp => ContextPartResponse.FromEntity(cp))
-                    .FirstOrDefaultAsync();
+            _logger.LogInformation(
+         $"Found ContextPart {contextPart.Name} in Context {contextPart.Context.Name} owned by {contextPart.Context.Owner.Name}");
+
+            return ContextPartResponse.FromEntity(contextPart);
         }
 
         public async Task<int?> GetUserActiveTabAsync(Guid cpId)
@@ -151,7 +160,7 @@ namespace Application.Services
                 return false;
             }
 
-            _context.Remove(id);
+            _context.ContextParts.Remove(id);
             await _context.SaveChangesAsync();
 
             _logger.LogInformation($"Successfully removed ContextPart with ID: {contextPartId}");
@@ -198,10 +207,13 @@ namespace Application.Services
         }
         public async Task<IEnumerable<ContextPartResponse>> GetAllContextPartsAsync(Guid contextId)
         {
+            //var contextParts = await _context.ContextParts
+            //    .Where(cp => cp.Id == contextId)
+            //    .Include(cp => cp.UserTabs.Where(ut => ut.Status == TabStatus.Open))
+            //    .ToListAsync();
+
             var contextParts = await _context.ContextParts
-                .Where(cp => cp.Id == contextId)
-                .Include(cp => cp.UserTabs.Where(ut => ut.Status == TabStatus.Open))
-                .ToListAsync();
+            .GetAll(contextId).ToListAsync();
 
             return contextParts.Select(cp => ContextPartResponse.FromEntity(cp));
         }
