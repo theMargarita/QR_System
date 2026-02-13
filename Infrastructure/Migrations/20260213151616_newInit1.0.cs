@@ -4,10 +4,12 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class init10Again : Migration
+    public partial class newInit10 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -63,13 +65,15 @@ namespace Infrastructure.Migrations
                 name: "contexts",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     QrToken = table.Column<string>(type: "text", nullable: true),
                     IsActive = table.Column<bool>(type: "boolean", nullable: false),
                     OwnerId = table.Column<Guid>(type: "uuid", nullable: true),
-                    ContextPartIsUnique = table.Column<bool>(type: "boolean", nullable: false)
+                    ContextPartIsUnique = table.Column<bool>(type: "boolean", nullable: false),
+                    IsTemporary = table.Column<bool>(type: "boolean", nullable: false),
+                    StartsAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ExpiresAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -90,7 +94,7 @@ namespace Infrastructure.Migrations
                     Name = table.Column<string>(type: "text", nullable: false),
                     QrToken = table.Column<string>(type: "text", nullable: true),
                     IsActive = table.Column<bool>(type: "boolean", nullable: false),
-                    ContextId = table.Column<int>(type: "integer", nullable: true)
+                    ContextId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -109,20 +113,19 @@ namespace Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    ContextId = table.Column<int>(type: "integer", nullable: false),
+                    ContextId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     ClosedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
                     OwnerId = table.Column<Guid>(type: "uuid", nullable: true),
-                    ContextPartId = table.Column<int>(type: "integer", nullable: true),
-                    ContextPartId1 = table.Column<Guid>(type: "uuid", nullable: true)
+                    ContextPartId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_usertabs", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_usertabs_contextparts_ContextPartId1",
-                        column: x => x.ContextPartId1,
+                        name: "FK_usertabs_contextparts_ContextPartId",
+                        column: x => x.ContextPartId,
                         principalTable: "contextparts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -198,6 +201,21 @@ namespace Infrastructure.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.InsertData(
+                table: "products",
+                columns: new[] { "Id", "Category", "Description", "Name", "Price", "Status" },
+                values: new object[,]
+                {
+                    { 1, null, "", "Coca Cola", 25.0m, 0 },
+                    { 2, "Dryck", "Öl som öl eller?", "Öl", 20.0m, 0 },
+                    { 3, "Dryck", "Le vin rouge pour un amore", "Röd vin", 22.0m, 0 },
+                    { 4, "Dryck", "Fizzy driink", "Sprite", 18.0m, 0 },
+                    { 5, "Dryck", "Still water - tap water", "Water", 10.0m, 0 },
+                    { 6, "Mat", "Nom nom italian pizza, tu veux une piece ou parfois deux pices? ", "Pizza", 30.0m, 0 },
+                    { 7, "Mat", "La pasta - c'est viens en Italie et tres bon", "Pasta", 28.0m, 0 },
+                    { 8, "Mat", "La Salade - tres  mais aussie bon et simple no? Avec la fromage et les totmotes", "Salad", 15.0m, 0 }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_contextparts_ContextId",
                 table: "contextparts",
@@ -234,9 +252,9 @@ namespace Infrastructure.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_usertabs_ContextPartId1",
+                name: "IX_usertabs_ContextPartId",
                 table: "usertabs",
-                column: "ContextPartId1");
+                column: "ContextPartId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_usertabs_UserId",

@@ -4,7 +4,7 @@ namespace Application.DTOs.ContextFolder.Response
 {
     public record ContextResponse
     {
-        public int Id { get; init; }
+        public Guid Id { get; init; }
         public string Name { get; init; } = string.Empty;
         public string? QrToken { get; init; }
         public bool IsActive { get; init; }

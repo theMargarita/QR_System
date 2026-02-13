@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(QrDbContext))]
-    [Migration("20260211153222_addedinterface")]
-    partial class addedinterface
+    [Migration("20260213151616_newInit1.0")]
+    partial class newInit10
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -28,16 +28,20 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Models.Context", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<bool>("ContextPartIsUnique")
                         .HasColumnType("boolean");
 
+                    b.Property<DateTime?>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsTemporary")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Name")
@@ -50,11 +54,40 @@ namespace Infrastructure.Migrations
                     b.Property<string>("QrToken")
                         .HasColumnType("text");
 
+                    b.Property<DateTime?>("StartsAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.HasKey("Id");
 
                     b.HasIndex("OwnerId");
 
                     b.ToTable("contexts");
+                });
+
+            modelBuilder.Entity("Domain.Models.ContextPart", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("ContextId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("QrToken")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ContextId");
+
+                    b.ToTable("contextparts");
                 });
 
             modelBuilder.Entity("Domain.Models.Owner", b =>
@@ -134,6 +167,79 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("products");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "",
+                            Name = "Coca Cola",
+                            Price = 25.0m,
+                            Status = 0
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Category = "Dryck",
+                            Description = "Öl som öl eller?",
+                            Name = "Öl",
+                            Price = 20.0m,
+                            Status = 0
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Category = "Dryck",
+                            Description = "Le vin rouge pour un amore",
+                            Name = "Röd vin",
+                            Price = 22.0m,
+                            Status = 0
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Category = "Dryck",
+                            Description = "Fizzy driink",
+                            Name = "Sprite",
+                            Price = 18.0m,
+                            Status = 0
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Category = "Dryck",
+                            Description = "Still water - tap water",
+                            Name = "Water",
+                            Price = 10.0m,
+                            Status = 0
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Category = "Mat",
+                            Description = "Nom nom italian pizza, tu veux une piece ou parfois deux pices? ",
+                            Name = "Pizza",
+                            Price = 30.0m,
+                            Status = 0
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Category = "Mat",
+                            Description = "La pasta - c'est viens en Italie et tres bon",
+                            Name = "Pasta",
+                            Price = 28.0m,
+                            Status = 0
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Category = "Mat",
+                            Description = "La Salade - tres  mais aussie bon et simple no? Avec la fromage et les totmotes",
+                            Name = "Salad",
+                            Price = 15.0m,
+                            Status = 0
+                        });
                 });
 
             modelBuilder.Entity("Domain.Models.Transaction", b =>
@@ -205,13 +311,10 @@ namespace Infrastructure.Migrations
                     b.Property<DateTimeOffset>("ClosedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("ContextId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("ContextId")
+                        .HasColumnType("uuid");
 
-                    b.Property<int?>("ContextPartId")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid?>("ContextPartId1")
+                    b.Property<Guid?>("ContextPartId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset>("CreatedAt")
@@ -228,37 +331,11 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ContextPartId1");
+                    b.HasIndex("ContextPartId");
 
                     b.HasIndex("UserId");
 
                     b.ToTable("usertabs");
-                });
-
-            modelBuilder.Entity("Domain.Models.ContextPart", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<int?>("ContextId")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("QrToken")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ContextId");
-
-                    b.ToTable("contextparts");
                 });
 
             modelBuilder.Entity("Domain.Models.Context", b =>
@@ -269,6 +346,16 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Owner");
+                });
+
+            modelBuilder.Entity("Domain.Models.ContextPart", b =>
+                {
+                    b.HasOne("Domain.Models.Context", "Context")
+                        .WithMany("Parts")
+                        .HasForeignKey("ContextId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Context");
                 });
 
             modelBuilder.Entity("Domain.Models.Payment", b =>
@@ -319,7 +406,7 @@ namespace Infrastructure.Migrations
                 {
                     b.HasOne("Domain.Models.ContextPart", "ContextPart")
                         .WithMany("UserTabs")
-                        .HasForeignKey("ContextPartId1")
+                        .HasForeignKey("ContextPartId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Models.User", "User")
@@ -333,19 +420,14 @@ namespace Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Domain.Models.ContextPart", b =>
-                {
-                    b.HasOne("Domain.Models.Context", "Context")
-                        .WithMany("Parts")
-                        .HasForeignKey("ContextId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Context");
-                });
-
             modelBuilder.Entity("Domain.Models.Context", b =>
                 {
                     b.Navigation("Parts");
+                });
+
+            modelBuilder.Entity("Domain.Models.ContextPart", b =>
+                {
+                    b.Navigation("UserTabs");
                 });
 
             modelBuilder.Entity("Domain.Models.User", b =>
@@ -362,11 +444,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("Payments");
 
                     b.Navigation("Transactions");
-                });
-
-            modelBuilder.Entity("Domain.Models.ContextPart", b =>
-                {
-                    b.Navigation("UserTabs");
                 });
 #pragma warning restore 612, 618
         }

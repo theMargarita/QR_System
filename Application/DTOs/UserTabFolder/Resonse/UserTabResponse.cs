@@ -9,7 +9,7 @@ namespace Application.DTOs.UserTabFolder.Resonse
         public Guid Id { get; init; }
         public Guid UserId { get; init; }
         public string UserFullName { get; init; } = string.Empty;
-        public int ContextId { get; init; }
+        public Guid ContextId { get; init; }
         public string ContextName { get; init; } = string.Empty;
         public string Status { get; init; } = string.Empty;
         public DateTimeOffset CreatedAt { get; init; }
