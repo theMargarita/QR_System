@@ -23,7 +23,7 @@ namespace QR_System
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<ITransactionService, TransactionService>();
             builder.Services.AddScoped<IOwnerService, OwnerService>();
-            //builder.Services.AddScoped<IUserTabService, UserTabService>();
+            builder.Services.AddScoped<IUserTabService, UserTabService>();
 
             // Controllers
             builder.Services.AddControllers();
