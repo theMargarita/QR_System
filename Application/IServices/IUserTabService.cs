@@ -12,7 +12,7 @@ namespace Application.IServices
         Task<IEnumerable<ActiveTabSummary>> GetActiveTabAsync();
         Task<UserTabResponse?> GetTabByIdAsync(Guid id);
         Task<IEnumerable<UserTabResponse>> GetAllAsync();
-        Task<UserTabResponse> CreateAsync(Guid id);
+        Task<UserTabResponse> CreateAsync(Guid contextPartId, Guid userId);
         Task<UserTabResponse> UpdateAsync(Guid id);
         Task<bool> DeleteAsync(Guid id);
         Task<UserDetailTabResponses?> GetTabDetailsAsync(Guid tabId);

@@ -28,10 +28,10 @@ namespace Application.Services
             throw new Exception();
         }
 
-        public async Task<UserTabResponse> CreateAsync(Guid id)
+        public async Task<UserTabResponse> CreateAsync(Guid contextPartId, Guid userId)
         {
-            var cpId = await _context.ContextParts.FindAsync(id);
-            var user = await _context.Users.FindAsync(id);
+            var cpId = await _context.ContextParts.FindAsync(contextPartId);
+            var user = await _context.Users.FindAsync(userId);
 
 
             if(cpId == null)

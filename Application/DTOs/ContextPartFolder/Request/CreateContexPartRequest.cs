@@ -1,6 +1,4 @@
-﻿using Domain.Models;
-
-namespace Application.DTOs.ContextPartFolder.Request
+﻿namespace Application.DTOs.ContextPartFolder.Request
 {
     public record CreateContexPartRequest
     {
