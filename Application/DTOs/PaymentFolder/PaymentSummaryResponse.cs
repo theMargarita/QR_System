@@ -1,16 +1,24 @@
 ﻿using Application.DTOs.UserFolder.Response;
+using Domain.Models;
 
 namespace Application.DTOs.PaymentFolder
 {
     public record PaymentSummaryResponse
     {
-        public int Id { get; init; }
+        public Guid Id { get; init; }
         public decimal Amount { get; init; }
-        //public int UserTabId { get; init; }
-        public string PaymentMethod { get; init; } = string.Empty;
-        public DateTimeOffset PaidAt { get; init; } = DateTimeOffset.UtcNow;
+        public PaymentMethod? Method { get; init; } 
+        public DateTimeOffset PaidAt { get; init; } 
 
-        // Optional: Include user information if needed
-        public IReadOnlyList<UserResponse>? Users { get; init; } 
+        public static PaymentSummaryResponse FromBody(Payment payment)
+        {
+            return new PaymentSummaryResponse
+            {
+                Id = payment.Id,
+                Amount = payment.Amount,
+                Method = payment.Method,
+                PaidAt = payment.CreatedAt,
+            };
+        }
     }
 }

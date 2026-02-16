@@ -2,7 +2,7 @@
 using Application.DTOs.TransactionFolder;
 using Domain.Models;
 
-namespace Application.DTOs.UserTabFolder.Resonse
+namespace Application.DTOs.UserTabFolder.Response
 {
     public record UserTabResponse
     {
@@ -21,18 +21,31 @@ namespace Application.DTOs.UserTabFolder.Resonse
         public IReadOnlyList<TransactionSummaryResponse>? Transactions { get; init; }
         public IReadOnlyList<PaymentSummaryResponse>? Payments { get; init; }
 
-        public static UserTabResponse FromUserTab(UserTab tab)
+        public static UserTabResponse FromBody(UserTab tab)
         {
+            var totalAmount = tab.Transactions?.Sum(t => t.Total) ?? 0;
+            var totalPaid = tab.Payments?.Sum(p => p.Amount) ?? 0;
+
             return new UserTabResponse
             {
                 Id = tab.Id,
                 UserId = tab.UserId,
-                UserFullName = $"{tab.User?.FirstName} {tab.User?.LastName}".Trim(),
+                UserFullName = tab.User != null ? $"{tab.User?.FirstName} {tab.User?.LastName}".Trim() : null,
                 ContextId = tab.ContextId,
-                ContextName = tab.ContextPart?.Name ?? string.Empty,
+                ContextName = tab.ContextPart != null ? tab.ContextPart?.Name ?? string.Empty : null,
                 Status = tab.Status.ToString(),
                 CreatedAt = tab.CreatedAt,
                 ClosedAt = tab.ClosedAt,
+
+                //calculations
+                TotalAmount = totalAmount,
+                PaidAmount = totalPaid,
+                RemainingAmount = totalAmount - totalPaid,
+                IsPaid = totalPaid >= totalAmount && totalAmount > 0,
+
+                //nested dtos
+                Transactions = tab.Transactions.Select(TransactionSummaryResponse.FromBody).ToList(),
+                Payments = tab.Payments.Select(PaymentSummaryResponse.FromBody).ToList()
             };
         }
     }

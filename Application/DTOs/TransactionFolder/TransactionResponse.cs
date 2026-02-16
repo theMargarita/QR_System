@@ -1,6 +1,8 @@
 ﻿using Application.DTOs.ProductFolder;
 using Application.DTOs.UserFolder.Response;
-using Application.DTOs.UserTabFolder.Resonse;
+using Application.DTOs.UserTabFolder.Response;
+
+//using Application.DTOs.UserTabFolder.Response;
 using Domain.Models;
 
 namespace Application.DTOs.TransactionFolder
@@ -29,7 +31,7 @@ namespace Application.DTOs.TransactionFolder
                 CreatedAt = transaction.CreatedAt,
                 Product = transaction.Product != null ? ProductResponse.FromProduct(transaction.Product) : null,
                 ProductId = transaction.ProductId,
-                Tab = transaction.Tab != null ? UserTabResponse.FromUserTab(transaction.Tab) : null,
+                Tab = transaction.Tab != null ? UserTabResponse.FromBody(transaction.Tab) : null,
                 TabId = transaction.TabId,
                 User = transaction.User != null ? UserResponse.FromUser(transaction.User) : null,
                 UserId = transaction.UserId
