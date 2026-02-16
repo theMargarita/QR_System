@@ -2,6 +2,7 @@ using Application.IServices;
 using Application.Services;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using QR_System.Controllers;
 
 namespace QR_System
 {
@@ -21,6 +22,7 @@ namespace QR_System
             builder.Services.AddScoped<IContextPartService, ContextPartService>();
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<ITransactionService, TransactionService>();
+            builder.Services.AddScoped<IOwnerService, OwnerService>();
             //builder.Services.AddScoped<IUserTabService, UserTabService>();
 
             // Controllers
