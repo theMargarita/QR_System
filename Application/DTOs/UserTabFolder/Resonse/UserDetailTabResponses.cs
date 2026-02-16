@@ -5,7 +5,7 @@ namespace Application.DTOs.UserTabFolder.Resonse
     //Get endpoint with userID 
     public class UserDetailTabResponses
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string? ContextPartName { get; set; } //ex. table 5
         public TabStatus Status { get; set; }
 

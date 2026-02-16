@@ -2,7 +2,7 @@
 {
     public record TransactionSummaryResponse
     {
-        public int Id { get; init; }
+        public Guid Id { get; init; }
         public string ItemName { get; init; } = string.Empty;
         public int Quantity { get; init; }
         public decimal UnitPrice { get; init; }

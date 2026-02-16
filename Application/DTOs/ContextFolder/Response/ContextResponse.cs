@@ -27,8 +27,6 @@ namespace Application.DTOs.ContextFolder.Response
                 OwnerId = context.OwnerId,
                 OwnerName = context.Owner?.Name,
                 ContextPartIsUnique = context.ContextPartIsUnique,
-                ContextPartsid = firstPart.Id,
-                PartName = firstPart.Name
             };
         }
     }

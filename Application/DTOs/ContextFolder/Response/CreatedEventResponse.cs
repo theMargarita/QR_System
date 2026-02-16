@@ -22,16 +22,22 @@ namespace Application.DTOs.ContextFolder.Response
         {
             var firstPart = context.Parts?.FirstOrDefault();
 
+            if (firstPart != null) 
+            {
+                Console.WriteLine($"Context part {firstPart} is null");
+                return null;
+            }
+
             return new CreatedEventResponse
             {
                 Id = context.Id,
                 Name = context.Name,
                 QrToken = context.QrToken,
                 IsActive = context.IsActive,
-                OwnerId = context.OwnerId,
+                OwnerId = context.OwnerId ?? Guid.Empty,
                 OwnerName = context.Owner?.Name,
                 ContextPartIsUnique = context.ContextPartIsUnique,
-                ContextPartsid = firstPart.Id,
+                ContextPartsid = firstPart?.Id ?? Guid.Empty,
                 PartName = firstPart.Name,
                 IsTemporary = context.IsTemporary,
                 StartsAt = context.StartsAt,
