@@ -26,18 +26,18 @@ namespace Application.Services
             //generate a random color
             Color qrColor = GenerateRadomColor();
 
-            using (QRCodeGenerator qrGenerator = new QRCodeGenerator())
-            using (QRCodeData qrCodeData = qrGenerator.CreateQrCode(url, QRCodeGenerator.ECCLevel.Q))
-            using (QRCode qrCode = new QRCode(qrCodeData))
-            using (Bitmap qrCodeImage = qrCode.GetGraphic(20, qrColor, Color.White, true)) //is only supported on windows - might be a probler later on
+            using (var qrGenerator = new QRCodeGenerator())
+            using (var qrCodeData = qrGenerator.CreateQrCode(url, QRCodeGenerator.ECCLevel.Q))
+            using (var qrCode = new QRCode(qrCodeData))
+            using (var qrCodeImage = qrCode.GetGraphic(20, qrColor, Color.White, true)) //is only supported on windows - might be a probler later on
             {
                 // Lägg till logo i mitten om den finns
                 if (!string.IsNullOrEmpty(logoPath) && File.Exists(logoPath))
                 {
-                    using (Bitmap logo = new Bitmap(logoPath))
-                    using (Graphics graphics = Graphics.FromImage(qrCodeImage))
+                    using (var logo = new Bitmap(logoPath))
+                    using (var graphics = Graphics.FromImage(qrCodeImage))
                     {
-                        int logoSize = qrCodeImage.Width / 5;
+                        int logoSize = qrCodeImage.Width / 6;
                         int logoX = (qrCodeImage.Width - logoSize) / 2;
                         int logoY = (qrCodeImage.Height - logoSize) / 2;
 

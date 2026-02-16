@@ -88,66 +88,6 @@ namespace QR_System.Controllers
             return NoContent();
         }
 
-        [HttpGet("{id}/qr/view")]
-        public async Task<ContentResult> ViewQrCode(Guid id)
-        {
-            var contextPart = await _contextPartService.GetContextPartByIdAsync(id);
-
-            if (contextPart == null)
-                return Content("<h1>Table not found</h1>", "text/html");
-
-            string qrBase64 = _qrCodeService.GenerateQrCodeBase64(contextPart.QrToken);
-            string qrUrl = _qrCodeService.GetQRCodeUrl(contextPart.QrToken);
-
-            string html = $@"
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset='utf-8'>
-                <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-                <title>{contextPart.Name} - QR Code</title>
-                <style>
-                    body {{ 
-                        font-family: Arial, sans-serif; 
-                        text-align: center; 
-                        margin: 50px;
-                        background: #f5f5f5;
-                    }}
-                    .container {{
-                        background: white;
-                        padding: 30px;
-                        border-radius: 10px;
-                        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-                        display: inline-block;
-                    }}
-                    .qr {{ 
-                        border: 3px solid #333; 
-                        padding: 20px; 
-                        background: white;
-                        border-radius: 5px;
-                    }}
-                </style>
-            </head>
-            <body>
-                <div class='container'>
-                    <h1>{contextPart.Name}</h1>
-                    <h3>Context: {contextPart.ContextName}</h3>
-                    <div class='qr'>
-                        <img src='data:image/png;base64,{qrBase64}' alt='QR Code' />
-                    </div>
-                    <p><strong>Token:</strong> {contextPart.QrToken}</p>
-                    <p><strong>Active Users:</strong> {contextPart.ActiveUserCount}</p>
-                    <a href='/api/contextpart/{id}/qr/download' 
-                       style='display:inline-block;margin-top:20px;padding:10px 20px;
-                              background:#007bff;color:white;text-decoration:none;border-radius:5px;'>
-                        Download PNG
-                    </a>
-                </div>
-            </body>
-            </html>";
-
-            return Content(html, "text/html");
-        }
 
         [HttpGet("{id}/qr/download")]
         public async Task<IActionResult> DownloadQrCode(Guid id)
