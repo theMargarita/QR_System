@@ -83,6 +83,7 @@ namespace Application.Services
             return user.Select(u => UserResponse.FromUser(u)).ToList();
         }
 
+        //cannot update - wiill take of this one lateer
         public async Task<UserResponse> UpdateUserAsync(Guid id, CreateUserRequest updatedUser)
         {
             var user = await _context.Users.FindAsync(id);

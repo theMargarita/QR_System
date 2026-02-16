@@ -14,15 +14,12 @@ namespace Application.Services
     {
         private readonly QrDbContext _context;
         private readonly ILogger<UserService> _logger;
-        //private readonly IQrCodeService _qrCodeService;
-        //private readonly IContextPartService _cpService;
 
-        public ContextService(ILogger<UserService> logger, QrDbContext context, IQrCodeService qrCodeService, IContextPartService cpService)
+        public ContextService(ILogger<UserService> logger, QrDbContext context)
         {
             _logger = logger;
             _context = context;
-            _qrCodeService = qrCodeService;
-            _cpService = cpService;
+        
         }
 
         public async Task<ContextResponse?> CreateContextAsync(CreateContextRequest request)
@@ -91,7 +88,7 @@ namespace Application.Services
             return _context.Contexts.Select(c => ContextResponse.FromContext(c));
         }
 
-        public async Task<ContextResponse?> GetContextByIdAsync(Guid id)
+        public async Task<CreatedEventResponse?> GetContextByIdAsync(Guid id)
         {
             var context = await _context.Contexts
           .Include(c => c.Owner)
@@ -104,7 +101,17 @@ namespace Application.Services
                 return null;
             }
 
-            return ContextResponse.FromContext(context);
+            //return CreatedEventResponse.FromContext(context);
+            return new CreatedEventResponse
+            {
+                Id = id,
+                Name = context.Name,
+                OwnerId = context.OwnerId,
+                OwnerName = context.Owner.Name,
+                IsTemporary = context.IsTemporary,
+                StartsAt = context.StartsAt,
+                ExpiresAt = context.ExpiresAt
+            };
         }
 
         // i think this one should be for events maybe? 
@@ -151,17 +158,17 @@ namespace Application.Services
             return true;
         }
         // Generates a unique QR token for a context when a new context is created 
-        public string GenerateUniqueQRToken()
-        {
-            string qrToken;
-            do
-            {
-                //generate a random token
-                qrToken = $"CTX_{Guid.NewGuid().ToString("N").Substring(0, 8).ToUpper()}";
-            }
-            while (_context.Contexts.QRTokenExistsAsync(qrToken).Result);
-            return qrToken;
-        }
+        //public string GenerateUniqueQRToken()
+        //{
+        //    string qrToken;
+        //    do
+        //    {
+        //        //generate a random token
+        //        qrToken = $"CTX_{Guid.NewGuid().ToString("N").Substring(0, 8).ToUpper()}";
+        //    }
+        //    while (_context.Contexts.QRTokenExistsAsync(qrToken).Result);
+        //    return qrToken;
+        //}
     }
 }
 //public Task<bool> ActivateContextAsync(int contextId)

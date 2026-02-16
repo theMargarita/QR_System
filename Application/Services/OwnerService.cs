@@ -20,7 +20,7 @@ public class OwnerService : IOwnerService
     {
         var owner = new Owner
         {
-            Id = Guid.NewGuid(),
+            //Id = Guid.NewGuid(),
             Name = ownerName
         };
 

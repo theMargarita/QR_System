@@ -205,17 +205,41 @@ namespace Application.Services
 
             return ContextPartResponse.FromEntity(contextPart);
         }
-        public async Task<IEnumerable<ContextPartResponse>> GetAllContextPartsAsync(Guid contextId)
+        public async Task<IEnumerable<ContextPartResponse>> GetAllContextPartsAsync()
         {
-            //var contextParts = await _context.ContextParts
-            //    .Where(cp => cp.Id == contextId)
-            //    .Include(cp => cp.UserTabs.Where(ut => ut.Status == TabStatus.Open))
-            //    .ToListAsync();
+            var cps = await _context.ContextParts
+            .GetAll().ToListAsync();
 
-            var contextParts = await _context.ContextParts
-            .GetAll(contextId).ToListAsync();
+            //return contextParts.Select(cp => ContextPartResponse.FromEntity(cp));
 
-            return contextParts.Select(cp => ContextPartResponse.FromEntity(cp));
+            return cps.Select(cp => new ContextPartResponse
+            {
+                Id = cp.Id,
+                ContextId = cp.Context.Id,
+                Name = cp.Name,
+                ContextName = cp.Context.Name,
+                QrToken = cp.QrToken,
+                IsActive = cp.IsActive,
+                ActiveUserCount = cp.UserTabs.ToList().Count(),
+            }).ToList();
+        }
+
+        public async Task<IEnumerable<ContextPartResponse>> GetAllContextPartWithContxtId(Guid id)
+        {
+            var cps = await _context.ContextParts.GetAllWithContextId(id).ToListAsync();
+
+
+            //return cps.Select(cp => ContextPartResponse.FromEntity(cp));
+
+            return cps.Select(cp => new ContextPartResponse
+            {
+                Id = id,
+                ContextId = cp.Context.Id,
+                Name = cp.Name,
+                ContextName = cp.Context.Name,
+                QrToken = cp.QrToken,
+                IsActive = cp.IsActive,
+            }).ToList();
         }
     }
 }
