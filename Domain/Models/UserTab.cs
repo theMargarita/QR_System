@@ -1,14 +1,12 @@
-﻿using Domain.Models;
-
-namespace Domain.Models
+﻿namespace Domain.Models
 {
     public class UserTab //användar nota
     {
         public Guid Id { get; set; } = Guid.NewGuid();
         public Guid UserId { get; set; }
         public Guid ContextId { get; set; }
-        public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
-        public DateTimeOffset ClosedAt { get; set; } = DateTimeOffset.UtcNow;
+        public DateTimeOffset CreatedAt { get; set; } //= DateTimeOffset.UtcNow;
+        public DateTimeOffset ClosedAt { get; set; } //= DateTimeOffset.UtcNow;
         public TabStatus Status { get; set; }
 
         public Guid? OwnerId { get; set; }
