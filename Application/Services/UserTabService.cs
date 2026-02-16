@@ -1,135 +1,117 @@
-﻿//using Application.DTOs.UserTabFolder.AdminTabFolder;
-//using Application.DTOs.UserTabFolder.Resonse;
-//using Application.IServices;
-//using Domain.Models;
-//using Infrastructure.Data;
-//using Microsoft.Extensions.Logging;
+﻿using Application.DTOs.UserTabFolder.AdminTabFolder;
+using Application.DTOs.UserTabFolder.Request;
+using Application.DTOs.UserTabFolder.Resonse;
+using Application.DTOs.UserTabFolder.Response;
+using Application.IServices;
+using Domain.Models;
+using Infrastructure.Data;
+using Microsoft.Extensions.Logging;
 
-//namespace Application.Services
-//{
-//    public class UserTabService : IUserTabService
-//    {
-//        private readonly QrDbContext _context;
-//        private readonly ILogger _logger;
-//        public UserTabService(ILogger<UserTabService> logger, QrDbContext context)
-//        {
-//            _logger = logger;
-//            _context = context;
-//        }
+namespace Application.Services
+{
+    public class UserTabService : IUserTabService
+    {
+        private readonly QrDbContext _context;
+        private readonly ILogger _logger;
+        private readonly IQrCodeService _qrCodeService;
+        public UserTabService(ILogger<UserTabService> logger, QrDbContext context, IQrCodeService qrCodeService)
+        {
+            _logger = logger;
+            _context = context;
+            _qrCodeService = qrCodeService;
+        }
 
-//        public Task<bool> CloseTabAsync(int tabId)
-//        {
-//            throw new NotImplementedException();
-//        }
+        public async Task<bool> CloseTabAsync(Guid id)
+        {
 
-//        public async Task<UserTabResponse> CreateAsync(UserTab tab)
-//        {
-//            var createdTab = await _unitOfWork.UserTabs.CreateAsync(tab);
-//            await _unitOfWork.SaveChangesAsync();
+        
+            throw new Exception();
+        }
 
-//            return new UserTabResponse
-//            {
-//                Id = createdTab.Id,
-//                UserId = createdTab.UserId,
-//                ContextId = createdTab.ContextId,
-//                CreatedAt = createdTab.CreatedAt,
-//                ClosedAt = createdTab.ClosedAt,
-//                Status = createdTab.Status.ToString(),
-//                ContextName = createdTab.ContextPart.Name,
-//                UserFullName = $"{createdTab.User.FirstName} {createdTab.User.LastName}",
+        public async Task<UserTabResponse> CreateAsync(Guid id)
+        {
+            var cpId = await _context.ContextParts.FindAsync(id);
+            var user = await _context.Users.FindAsync(id);
 
 
-//            };
-//        }
+            if(cpId == null)
+            {
+                _logger.LogInformation("Could not find Id ");
+                return null;
+            }
 
-//        public async Task<bool> DeleteAsync(int id)
-//        {
-//            var deletedTab = await _unitOfWork.UserTabs.GetByIdAsync(id);
+            var newTab = new UserTab
+            {
+                ContextPartId = cpId.Id,
+                UserId = user.Id,
+                CreatedAt = DateTime.Now,
+                Status = TabStatus.Open,
+            };
+            _context.UserTabs.Add(newTab);
+            await _context.SaveChangesAsync();
 
-//            if (deletedTab == null)
-//            {
-//                return false;
-//            }
-//            await _unitOfWork.UserTabs.DeleteAsync(id);
-//            await _unitOfWork.SaveChangesAsync();
+            return UserTabResponse.FromBody(newTab);
 
-//            _logger.LogInformation($"Deleted UserTab with ID {id}");
-//            return true;
-//        }
+        }
 
-//        //for admin dashboard
-//        public async Task<IEnumerable<ActiveTabSummary>> GetActiveTabAsync()
-//        {
-//            var active = await _unitOfWork.UserTabs.GetActiveAsync();
+        //this one should not reallt remove - it should still exists - ruleset? 
+        public async Task<bool> DeleteAsync(Guid id)
+        {
+            var findId = await _context.UserTabs.FindAsync(id);
 
-//            var summeries = new List<ActiveTabSummary>(); // build new dt list to return only the required data for the dashboard
+            if (findId == null)
+            {
+                _logger.LogInformation($"Could not find anything on the id {findId}");
+                return false;
+            }
+            _context.UserTabs.Remove(findId);
+            await _context.SaveChangesAsync();
 
-//            foreach (var tab in active)
-//            {
-//                //get the participant count for each active tab
-//                var participantCount = await _unitOfWork.UserTabs.GetParticipantCountAsync(tab.Id);
+            return true;
+        }
 
-                
+        public Task<IEnumerable<ActiveTabSummary>> GetActiveTabAsync()
+        {
+            throw new NotImplementedException();
+        }
 
-//                //get the total amount for each active tab
-//                var totalAmount = _unitOfWork.Transactions.GetTotalByTabIdAsync(tab.Id);
+        public async Task<IEnumerable<UserTabResponse>> GetAllAsync()
+        {
+            //var list = _context.UserTabs;
+            //return await list.Select(x => new  UserTabResponse.FromUserTab(x)).ToListAsync();
 
-//                //get the total paid amount for each active tab
-//                var totalPaid = _unitOfWork.Payments.GetTotalPaidAsync(tab.Id);
+            throw new Exception();
+        }
 
-//                //decimal remainingAmount = totalAmount - totalPaid;
-//                var duration = DateTimeOffset.UtcNow - tab.CreatedAt;
-//            }
+        public Task<UserTabResponse?> GetTabByIdAsync(Guid id)
+        {
+            throw new NotImplementedException();
+        }
 
+        public Task<UserDetailTabResponses?> GetTabDetailsAsync(Guid tabId)
+        {
+            throw new NotImplementedException();
 
-//            var summary = new ActiveTabSummary
-//            {
-             
-//            };
+        }
 
-//            summeries.Add(summary);
-//            return summeries;
-//        }
+        public Task<bool> HasOpenTabAsync(Guid userId)
+        {
+            throw new NotImplementedException();
+        }
 
-//        public async Task<IEnumerable<UserTabResponse>> GetAllAsync()
-//        {
-//            return await _unitOfWork.UserTabs.FindAsync(ut => ut.Status == TabStatus.Open)
-//                .ContinueWith(t => t.Result.Select(ut => new UserTabResponse
-//                {
-//                    //Id = ut.Id,
-//                    UserId = ut.UserId,
-//                    ContextId = ut.ContextId,
-//                    CreatedAt = ut.CreatedAt,
-//                    ClosedAt = ut.ClosedAt,
-//                    Status = ut.Status.ToString(),
-//                    ContextName = ut.ContextPart.Name,
-//                    UserFullName = $"{ut.User.FirstName} {ut.User.LastName}",
-//                }));
-//        }
+        public Task<bool> IsTabPaidAsync(Guid tabId)
+        {
+            throw new NotImplementedException();
+        }
 
-//        public Task<UserTabResponse?> GetByIdAsync(int id)
-//        {
-//            throw new NotImplementedException();
-//        }
+        public Task<ScanRequest> ToOrder(string qrToken)
+        {
+            throw new NotImplementedException();
+        }
 
-//        public Task<UserDetailTabResponses?> GetTabDetailsAsync(int tabId)
-//        {
-//            throw new NotImplementedException();
-//        }
-
-//        public Task<bool> HasOpenTabAsync(int userId)
-//        {
-//            throw new NotImplementedException();
-//        }
-
-//        public Task<bool> IsTabPaidAsync(int tabId)
-//        {
-//            throw new NotImplementedException();
-//        }
-
-//        public Task<UserTabResponse> UpdateAsync(UserTab tab)
-//        {
-//            throw new NotImplementedException();
-//        }
-//    }
-//}
+        public Task<UserTabResponse> UpdateAsync(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}
