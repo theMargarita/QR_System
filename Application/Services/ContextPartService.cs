@@ -35,18 +35,10 @@ namespace Application.Services
                 return null;
             }
 
-            // Generate a unique QR token
             var qrToken = await QrGenerateHelper.GenerateUniqueForContextPart(_context);
 
-            //var qrCodeImage = _qrCodeService.GenerateQrCode(uniqueQrToken); //create QR code image based on the token
-            //if (qrCodeImage == null)
-            //{
-            //    _logger.LogError("Failed to generate QR code image.");
-            //    return null;
-            //}
             var newPart = new ContextPart
             {
-                //Id = Guid.NewGuid(),
                 Name = request.Name,
                 QrToken = qrToken,
                 IsActive = request.IsActive,
