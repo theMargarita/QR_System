@@ -1,4 +1,6 @@
-﻿using Domain.Models;
+﻿using System;
+using System.Linq;
+using Domain.Models;
 
 namespace Application.DTOs.ContextFolder.Response
 {
@@ -11,22 +13,18 @@ namespace Application.DTOs.ContextFolder.Response
         public Guid? OwnerId { get; init; }
         public string? OwnerName { get; init; }
         public bool ContextPartIsUnique { get; init; }
-        public Guid ContextPartsid { get; init; }
-        public string? PartName { get; set; }
 
-        public bool IsTemporary { get; set; }
-        public DateTime? StartsAt { get; set; }
-        public DateTime? ExpiresAt { get; set; }
+        // Make nullable so missing part is represented explicitly
+        public Guid? ContextPartsid { get; init; }
+        public string? PartName { get; init; }
+
+        public bool IsTemporary { get; init; }
+        public DateTime? StartsAt { get; init; }
+        public DateTime? ExpiresAt { get; init; }
 
         public static CreatedEventResponse FromContext(Context context)
         {
             var firstPart = context.Parts?.FirstOrDefault();
-
-            if (firstPart != null) 
-            {
-                Console.WriteLine($"Context part {firstPart} is null");
-                return null;
-            }
 
             return new CreatedEventResponse
             {
@@ -34,11 +32,11 @@ namespace Application.DTOs.ContextFolder.Response
                 Name = context.Name,
                 QrToken = context.QrToken,
                 IsActive = context.IsActive,
-                OwnerId = context.OwnerId ?? Guid.Empty,
+                OwnerId = context.OwnerId,
                 OwnerName = context.Owner?.Name,
                 ContextPartIsUnique = context.ContextPartIsUnique,
-                ContextPartsid = firstPart?.Id ?? Guid.Empty,
-                PartName = firstPart.Name,
+                ContextPartsid = firstPart?.Id,
+                PartName = firstPart?.Name,
                 IsTemporary = context.IsTemporary,
                 StartsAt = context.StartsAt,
                 ExpiresAt = context.ExpiresAt
