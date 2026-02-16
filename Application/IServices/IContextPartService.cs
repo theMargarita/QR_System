@@ -19,6 +19,7 @@ namespace Application.IServices
 
         Task<bool> RemoveContextPartAsync(Guid contextPartId);
         Task<ContextPartResponse> GetContextPartByIdAsync(Guid contextPartId);
-        Task<IEnumerable<ContextPartResponse>> GetAllContextPartsAsync(Guid contextId);
+        Task<IEnumerable<ContextPartResponse>> GetAllContextPartsAsync();
+        Task<IEnumerable<ContextPartResponse>> GetAllContextPartWithContxtId(Guid id);
     }
 }

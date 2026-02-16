@@ -7,7 +7,7 @@ namespace Application.IServices
     public interface IContextService
     {
         Task<ContextResponse?> CreateContextAsync(CreateContextRequest request);
-        Task<ContextResponse?> GetContextByIdAsync(Guid id);
+        Task<CreatedEventResponse?> GetContextByIdAsync(Guid id);
         Task<IEnumerable<ContextResponse>> GetAllContextsAsync();
         
         Task<bool> RemoveContextAsync(Guid id);
