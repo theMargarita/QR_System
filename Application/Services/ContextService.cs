@@ -14,43 +14,72 @@ namespace Application.Services
     {
         private readonly QrDbContext _context;
         private readonly ILogger<UserService> _logger;
-        private readonly IQrCodeService _qrCodeService;
 
-        public ContextService(ILogger<UserService> logger, QrDbContext context, IQrCodeService qrCodeService)
+        public ContextService(ILogger<UserService> logger, QrDbContext context)
         {
             _logger = logger;
             _context = context;
-            _qrCodeService = qrCodeService;
+        
         }
 
-        public async Task<ContextResponse?> CreateContextAsync(QrContextPartRequest newContext)
+        public async Task<ContextResponse?> CreateContextAsync(CreateContextRequest request)
         {
             //var uniqueToken = GenerateUniqueQRToken();
+            var owner = await _context.Owners.FindAsync(request.OwnerId);
+            if (owner == null)
+                _logger.LogInformation($"Could not find owner with id: {owner}");
 
-            var addItem = new Context
+            var qrToken = await QrGenerateHelper.GenerateUniqueForContext(_context);
+
+            var context = new Context
             {
-                Name = newContext.Name,
-                QrToken = newContext.QrToken,
-                OwnerId = newContext.OwnerId,
-                //ContextPartIsUnique = newContext.ContextPartIsUnique //??? - this is a bool - might be to much
+                Name = request.Name,
+                OwnerId = request.OwnerId,
+                Owner = owner,
+                QrToken = qrToken,
+                IsActive = true,
+                ContextPartIsUnique = request.ContextPartIsUnique,
             };
 
-            _context.Contexts.Add(addItem);
+            await _context.Contexts.AddAsync(context);
             await _context.SaveChangesAsync();
 
-            if (addItem == null)
-            {
-                _logger.LogError("Failed to create context entity from request.");
-                if (addItem.QrToken == null)
-                {
-                    _logger.LogWarning("QrToken is null in the create context request.");
-                    return null;
-                }
-                return null;
-            }
             //newContext.QrToken = uniqueToken;
 
-            return ContextResponse.FromContext(addItem);
+            return ContextResponse.FromContext(context);
+        }
+
+        public async Task<CreatedEventResponse?> CreateEventAsync(CreateContextRequest request)
+        {
+            //var uniqueToken = GenerateUniqueQRToken();
+            var owner = await _context.Owners.FindAsync(request.OwnerId);
+            if (owner == null)
+                _logger.LogInformation($"Could not find owner with id: {owner}");
+
+            var qrToken = await QrGenerateHelper.GenerateUniqueForContext(_context);
+
+            var context = new Context
+            {
+                Name = request.Name,
+                OwnerId = request.OwnerId,
+                Owner = owner,
+                QrToken = qrToken,
+                IsActive = true,
+                ContextPartIsUnique = request.ContextPartIsUnique,
+
+                IsTemporary = request.IsTemporary == true,
+                StartsAt = request.StartsAt,
+                ExpiresAt = request.ExpiresAt
+            };
+
+            await _context.Contexts.AddAsync(context);
+            await _context.SaveChangesAsync();
+
+            //newContext.QrToken = uniqueToken;
+
+            _logger.LogInformation($"Created Context {context.Id} for Owner {owner.Name}");
+
+            return CreatedEventResponse.FromContext(context);
         }
 
         public async Task<IEnumerable<ContextResponse>> GetAllContextsAsync()
@@ -59,17 +88,30 @@ namespace Application.Services
             return _context.Contexts.Select(c => ContextResponse.FromContext(c));
         }
 
-        public async Task<ContextResponse?> GetContextByIdAsync(Guid id)
+        public async Task<CreatedEventResponse?> GetContextByIdAsync(Guid id)
         {
-            var contextId = await _context.Contexts.FindAsync(id);
+            var context = await _context.Contexts
+          .Include(c => c.Owner)
+          .Include(c => c.Parts)
+          .FirstOrDefaultAsync(c => c.Id == id);
 
-            if (contextId == null)
+            if (context == null)
             {
                 _logger.LogWarning($"Context with ID {id} not found.");
                 return null;
             }
 
-            return ContextResponse.FromContext(contextId);
+            //return CreatedEventResponse.FromContext(context);
+            return new CreatedEventResponse
+            {
+                Id = id,
+                Name = context.Name,
+                OwnerId = context.OwnerId,
+                OwnerName = context.Owner.Name,
+                IsTemporary = context.IsTemporary,
+                StartsAt = context.StartsAt,
+                ExpiresAt = context.ExpiresAt
+            };
         }
 
         // i think this one should be for events maybe? 
@@ -83,11 +125,20 @@ namespace Application.Services
                 return null;
             }
 
+            //return await _context.Contexts
+            //     .Search(searchTerm)
+            //     .Select(c => ContextResponse
+            //     .FromContext(c))
+            //     .ToListAsync();
+
+            var normalizedTerm = searchTerm.Trim().ToLower();
+
             return await _context.Contexts
-                 .Search(searchTerm)
-                 .Select(c => ContextResponse
-                 .FromContext(c))
-                 .ToListAsync();
+                .Include(c => c.Owner)
+                .Where(c => c.Name.ToLower().Contains(normalizedTerm) ||
+                           c.Owner.Name.ToLower().Contains(normalizedTerm))
+                .Select(c => ContextResponse.FromContext(c))
+                .ToListAsync();
         }
 
         public async Task<bool> RemoveContextAsync(Guid id)

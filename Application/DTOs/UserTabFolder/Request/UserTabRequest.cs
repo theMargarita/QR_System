@@ -2,7 +2,7 @@
 {
     public class UserTabRequest
     {
-        public int UserTabId { get; set; } 
+        public Guid UserTabId { get; set; } 
 
     }
 }

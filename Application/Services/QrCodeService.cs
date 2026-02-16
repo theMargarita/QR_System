@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using QRCoder;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 
 namespace Application.Services
 {
@@ -43,9 +44,9 @@ namespace Application.Services
                         graphics.DrawImage(logo, logoX, logoY, logoSize, logoSize);
                     }
                 }
-                using (MemoryStream ms = new MemoryStream()) //Streams måste stängas annars låser de minne
+                using ( var ms = new MemoryStream()) //Streams måste stängas annars låser de minne
                 {
-                    //qrCodeImage.Save(ms, ImageFormat.Png);
+                    qrCodeImage.Save(ms, ImageFormat.Png);
 
                     return ms.ToArray();//(array av bytes) istället för en fil på disk
                 }

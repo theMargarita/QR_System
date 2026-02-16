@@ -6,8 +6,8 @@ namespace Application.IServices
     //Dont forget to use dtos and not models in services
     public interface IContextService
     {
-        Task<ContextResponse?> CreateContextAsync(QrContextPartRequest newContext);
-        Task<ContextResponse?> GetContextByIdAsync(Guid id);
+        Task<ContextResponse?> CreateContextAsync(CreateContextRequest request);
+        Task<CreatedEventResponse?> GetContextByIdAsync(Guid id);
         Task<IEnumerable<ContextResponse>> GetAllContextsAsync();
         
         Task<bool> RemoveContextAsync(Guid id);

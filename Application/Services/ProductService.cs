@@ -110,6 +110,7 @@ namespace Application.Services
                 Status = request.Status
             });
 
+            await _context.SaveChangesAsync();
             _logger.LogInformation($"Product with ID {id} updated successfully");
         }
         public async Task<IEnumerable<ProductResponse>> SearchProductAsync(string searchTerm)

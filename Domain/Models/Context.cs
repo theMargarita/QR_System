@@ -1,10 +1,8 @@
-﻿using Domain.Models;
-
-namespace Domain.Models
+﻿namespace Domain.Models
 {
     public class Context //representerar en restaurang/cafe/bar/bord/etc
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty; //ölkyl
         public string? QrToken { get; set; }
         public bool IsActive { get; set; } //om false, är context inaktiv och kan inte användas för då använder någon den förmodar jag 
@@ -13,6 +11,12 @@ namespace Domain.Models
         public Guid? OwnerId { get; set; }
 
         public bool ContextPartIsUnique { get; set; } //om true, kan en användare bara vara i en contextpart i taget inom denna context
+
+        // För temporära events
+        public bool IsTemporary { get; set; }
+        public DateTime? StartsAt { get; set; }
+        public DateTime? ExpiresAt {  get; set; }
+     
 
         public ICollection<ContextPart>? Parts { get; set; }
     }

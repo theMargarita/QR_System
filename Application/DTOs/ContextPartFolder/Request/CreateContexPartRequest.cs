@@ -7,6 +7,6 @@ namespace Application.DTOs.ContextPartFolder.Request
         public string Name { get; set; } = string.Empty; 
         public string? QrToken { get; set; }
         public bool IsActive { get; set; } = true;
-        public int ContextId { get; set; }
+        public Guid ContextId { get; set; }
     }
 }

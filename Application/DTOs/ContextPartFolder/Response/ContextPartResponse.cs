@@ -10,7 +10,7 @@ namespace Application.DTOs.CPFolder.Response
         public string? QrToken { get; init; }
 
         // nav prop
-        public int ContextId { get; init; }
+        public Guid ContextId { get; init; }
         public string? ContextName { get; init; }
 
         // Status
@@ -25,7 +25,7 @@ namespace Application.DTOs.CPFolder.Response
                 Id = cp.Id,
                 Name = cp.Name,
                 QrToken = cp.QrToken,
-                ContextId = cp.Context?.Id ?? 0,
+                ContextId = cp.Context.Id,
                 ContextName = cp.Context?.Name,
                 IsActive = cp.IsActive,
                 ActiveUserCount = cp.UserTabs?.Count(ut => !ut.IsClosed) ?? 0,
