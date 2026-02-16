@@ -10,7 +10,7 @@ namespace Application.DTOs.UserTabFolder.Resonse
         public TabStatus Status { get; set; }
 
         //order list from dto
-        public List<UserOrderReponse> UserOrder { get; set; } = new List<UserOrderReponse>();
+        public List<UserOrderResponse> UserOrder { get; set; } = new List<UserOrderResponse>();
 
         //user total
         public decimal UserTotal { get; set; }
@@ -22,7 +22,7 @@ namespace Application.DTOs.UserTabFolder.Resonse
         public List<string>? OtherParticipantsName { get; set; } //maybe valid
     }
 
-    public class UserOrderReponse
+    public class UserOrderResponse
     {
         public string? ProductName { get; set; }
         public int Quantity { get; set; }
