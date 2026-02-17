@@ -1,5 +1,6 @@
 ﻿using Application.DTOs.ContextFolder.Request;
 using Application.DTOs.ContextFolder.Response;
+using Application.DTOs.OwnerFolder;
 using Application.IServices;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,14 +8,8 @@ namespace QR_System.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ContextController : ControllerBase
+    public class ContextController(IContextService _contextService) : ControllerBase
     {
-        private readonly IContextService _contextService;
-
-        public ContextController(IContextService contextService)
-        {
-            _contextService = contextService;
-        }
 
         [HttpPost("CreateContext")]
         [ProducesResponseType(typeof(ContextResponse), StatusCodes.Status200OK)]
@@ -43,6 +38,19 @@ namespace QR_System.Controllers
                     context.OwnerId,
                     context.ContextPartIsUnique
                 });
+
+            //var test = new OwnerAndContextRequest() { OwnerName = "" };
+            //if(test is { ContextName: "1", OwnerName: "5" })
+            //{
+
+            //}
+
+            //if (test?.ContextName == "1" && test?.OwnerName == "5")
+            //{
+
+            //}
+
+            //test.OwnerName ??= "asddsa";
         }
 
         [HttpGet("{id}/fetchContextById")]
@@ -70,7 +78,7 @@ namespace QR_System.Controllers
 
         // Optional: return token/scan-url instead of PNG (frontend builds QR)
         [HttpGet("{id}/qr")]
-        public async Task<IActionResult> GetQrToken(Guid id)
+        public async Task<IActionResult> GetQrToken([FromRoute] Guid id)
         {
             var context = await _contextService.GetContextByIdAsync(id);
             if (context == null) return NotFound("Context not found.");

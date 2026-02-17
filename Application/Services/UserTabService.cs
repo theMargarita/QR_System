@@ -54,9 +54,7 @@ namespace Application.Services
             {
                 PartId = cpId,
                 UserId = userId,
-                //Status = newTab.Status.ToString(),
                 ContextName = ctx.Name,
-                //UserFullName = newTab.User.FullName,
                 CreatedAt = newTab.CreatedAt,
                 ClosedAt = newTab.ClosedAt,
             };
