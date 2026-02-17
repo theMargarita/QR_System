@@ -16,7 +16,7 @@ namespace Application.IServices
         Task<UserTabResponse> UpdateAsync(Guid id);
         Task<bool> DeleteAsync(Guid id);
         Task<UserDetailTabResponses?> GetTabDetailsAsync(Guid tabId);
-        Task<ScanRequest> ToOrder(string qrToken);
+        Task<OpenTabRequest> ToOrder(string qrToken);
 
         //to controll if user has opened a tab
         Task<bool> HasOpenTabAsync(Guid userId);

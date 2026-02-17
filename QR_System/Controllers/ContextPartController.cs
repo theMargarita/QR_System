@@ -10,41 +10,28 @@ namespace QR_System.Controllers
     public class ContextPartController : ControllerBase
     {
         private readonly IContextPartService _contextPartService;
-        private readonly IQrCodeService _qrCodeService;
 
-        public ContextPartController(
-            IContextPartService contextPartService,
-            IQrCodeService qrCodeService)
+        public ContextPartController(IContextPartService contextPartService)
         {
             _contextPartService = contextPartService;
-            _qrCodeService = qrCodeService;
         }
 
         [HttpPost]
-        public async Task<ActionResult<ContextPartResponse>> CreateContextPart(
-            [FromBody] CreateContexPartRequest request)
+        public async Task<ActionResult<ContextPartResponse>> CreateContextPart([FromBody] CreateContexPartRequest request)
         {
             var contextPart = await _contextPartService.CreateContextPartAsync(request);
+            if (contextPart == null) return BadRequest("ContextPart could not be created. Context might not exist.");
 
-            if (contextPart == null)
-            {
-                return BadRequest("ContextPart could not be created. Context might not exist.");
-            }
-
-            string qrBase64 = _qrCodeService.GenerateQrCodeBase64(contextPart.QrToken);
+            // Return token for frontend to render QR
             var newCp = new
             {
                 contextPart.Id,
                 contextPart.Name,
                 contextPart.QrToken,
-                contextPart.IsActive,
-                //contextPart.ContextId,
-                QrCodeBase64 = qrBase64
+                contextPart.IsActive
             };
 
-            return CreatedAtAction(
-                nameof(GetContextPartById),
-                new { id = contextPart.Id }, newCp);
+            return CreatedAtAction(nameof(GetContextPartById), new { id = contextPart.Id }, newCp);
         }
 
         [HttpGet("GetAllContextParts")]
@@ -58,51 +45,24 @@ namespace QR_System.Controllers
         public async Task<ActionResult<ContextPartResponse>> GetContextPartById(Guid id)
         {
             var contextPart = await _contextPartService.GetContextPartByIdAsync(id);
-
-            if (contextPart == null)
-            {
-                return NotFound($"ContextPart with ID {id} not found.");
-            }
-
+            if (contextPart == null) return NotFound($"ContextPart with ID {id} not found.");
             return Ok(contextPart);
         }
 
-        [HttpGet("context/{contextId}")]
-        public async Task<ActionResult<IEnumerable<ContextPartResponse>>> GetContextParts(
-            Guid contextId)
+        [HttpGet("{id}/qr")]
+        public async Task<IActionResult> GetContextPartQrToken(Guid id)
         {
-            var contextParts = await _contextPartService.GetAllContextPartWithContxtId(contextId);
-            return Ok(contextParts);
+            var contextPart = await _contextPartService.GetContextPartByIdAsync(id);
+            if (contextPart == null) return NotFound("ContextPart not found.");
+            return Ok(new { contextPart.Id, contextPart.QrToken });
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteContextPart(Guid id)
         {
             var result = await _contextPartService.RemoveContextPartAsync(id);
-
-            if (!result)
-            {
-                return NotFound($"ContextPart with ID {id} not found.");
-            }
-
+            if (!result) return NotFound($"ContextPart with ID {id} not found.");
             return NoContent();
-        }
-
-
-        [HttpGet("{id}/qr/download")]
-        public async Task<IActionResult> DownloadQrCode(Guid id)
-        {
-            var contextPart = await _contextPartService.GetContextPartByIdAsync(id); //cp id
-
-            if (contextPart == null)
-                return NotFound("ContextPart not found.");
-
-            byte[] qrBytes = _qrCodeService.GenerateQrCode(contextPart.QrToken);
-
-            return File(
-                qrBytes,
-                "image/png",
-                $"QR_{contextPart.ContextName}_{contextPart.Name}_{DateTime.Now:yyyyMMdd}.png");
         }
     }
 }
