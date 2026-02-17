@@ -19,9 +19,8 @@ namespace Infrastructure.Extensions
 
         public static IQueryable<Context> Search(this IQueryable<Context> query, string searchTerm) => query
                 .Where(c => c.Name.Contains(searchTerm)
-                || c.QrToken.Contains(searchTerm)
-                || c.QrToken.Contains(searchTerm)
-                 || c.IsActive)
+                || c.QrToken.Contains(searchTerm)).Where(c => c.IsActive == true)
+                 //|| c.IsActive)
             .Take(10);
     }
 }
