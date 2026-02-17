@@ -5,8 +5,8 @@
         public Guid Id { get; set; } = Guid.NewGuid();
         public Guid UserId { get; set; }
         public Guid ContextId { get; set; }
-        public DateTimeOffset CreatedAt { get; set; } //= DateTimeOffset.UtcNow;
-        public DateTimeOffset ClosedAt { get; set; } //= DateTimeOffset.UtcNow;
+        public DateTimeOffset CreatedAt { get; set; } 
+        public DateTimeOffset ClosedAt { get; set; }
         public TabStatus Status { get; set; }
 
         public Guid? OwnerId { get; set; }
@@ -16,7 +16,6 @@
         public ContextPart? ContextPart { get; set; }
         public ICollection<Transaction>? Transactions { get; set; }
         public ICollection<Payment>? Payments { get; set; }
-        //public ICollection<Product>? Products { get; set; } //i think this one should be here
 
         public User? User { get; set; }
 

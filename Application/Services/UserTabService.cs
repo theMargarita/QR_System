@@ -5,6 +5,8 @@ using Application.DTOs.UserTabFolder.Response;
 using Application.IServices;
 using Domain.Models;
 using Infrastructure.Data;
+using Infrastructure.Extensions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Application.Services
@@ -13,48 +15,97 @@ namespace Application.Services
     {
         private readonly QrDbContext _context;
         private readonly ILogger _logger;
-        private readonly IQrCodeService _qrCodeService;
-        public UserTabService(ILogger<UserTabService> logger, QrDbContext context, IQrCodeService qrCodeService)
+        public UserTabService(ILogger<UserTabService> logger, QrDbContext context)
         {
             _logger = logger;
             _context = context;
-            _qrCodeService = qrCodeService;
         }
 
         public async Task<bool> CloseTabAsync(Guid id)
         {
 
-        
+
             throw new Exception();
         }
 
-        public async Task<UserTabResponse> CreateAsync(Guid contextPartId, Guid userId)
+        public async Task<UserTabResponse?> GetOrCreateTabByQrTokenAsync(string qrToken, Guid userId, Guid cpId)
         {
-            var cpId = await _context.ContextParts.FindAsync(contextPartId);
-            var user = await _context.Users.FindAsync(userId);
+            var getQr = await _context.ContextParts.Where(x => x.QrToken == qrToken).ToListAsync();
+            var ctx = await _context.ContextParts.QrCode(qrToken).FirstOrDefaultAsync();
 
-
-            if(cpId == null)
+            if (getQr is null && ctx is null)
             {
-                _logger.LogInformation("Could not find Id ");
+                _logger.LogInformation("Could not find");
                 return null;
             }
 
             var newTab = new UserTab
             {
-                ContextPartId = cpId.Id,
-                UserId = user.Id,
-                CreatedAt = DateTime.Now,
+                UserId = userId,
                 Status = TabStatus.Open,
+                CreatedAt = DateTime.UtcNow,
+                ContextPartId = ctx.Id,
             };
+
             _context.UserTabs.Add(newTab);
             await _context.SaveChangesAsync();
 
-            return UserTabResponse.FromBody(newTab);
-
+            return new UserTabResponse
+            {
+                PartId = cpId,
+                UserId = userId,
+                //Status = newTab.Status.ToString(),
+                ContextName = ctx.Name,
+                //UserFullName = newTab.User.FullName,
+                CreatedAt = newTab.CreatedAt,
+                ClosedAt = newTab.ClosedAt,
+            };
         }
 
-        //this one should not reallt remove - it should still exists - ruleset? 
+        public async Task<OpenTabResponse?> OpenTabAsync(string qrToken, Guid userId)
+        {
+            var contextPart = await _context.ContextParts.QrCode(qrToken).FirstOrDefaultAsync();
+
+            if (contextPart == null)
+            {
+                _logger.LogWarning("No active table found for QR token {Token}", qrToken);
+                return null;
+            }
+
+
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+            {
+                _logger.LogWarning("User {UserId} not found", userId);
+                return null;
+            }
+
+            var newTab = new UserTab
+            {
+                UserId = userId,
+                ContextPartId = contextPart.Id,
+                ContextId = contextPart.Id,
+                Status = TabStatus.Open,
+                CreatedAt = DateTimeOffset.UtcNow
+            };
+
+            _context.UserTabs.Add(newTab);
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation("Created new tab {TabId} for user {UserId} at {TableName}",
+                newTab.Id, userId, contextPart.Name);
+
+            return new OpenTabResponse
+            {
+                TabId = newTab.Id,
+                UserId = userId,
+                TableName = contextPart.Name,
+                Status = newTab.Status.ToString(),
+                CreatedAt = newTab.CreatedAt
+            };
+        }
+
+        //soft delete
         public async Task<bool> DeleteAsync(Guid id)
         {
             var findId = await _context.UserTabs.FindAsync(id);
@@ -70,28 +121,41 @@ namespace Application.Services
             return true;
         }
 
+        //active tab for user or just the tab? 
         public Task<IEnumerable<ActiveTabSummary>> GetActiveTabAsync()
         {
+            //var tab = _context.UserTabs.ActiveTabsAtTable();
             throw new NotImplementedException();
         }
 
         public async Task<IEnumerable<UserTabResponse>> GetAllAsync()
         {
-            //var list = _context.UserTabs;
-            //return await list.Select(x => new  UserTabResponse.FromUserTab(x)).ToListAsync();
-
-            throw new Exception();
+            return await _context.UserTabs.Select(x => UserTabResponse.FromBody(x)).ToListAsync();
         }
 
-        public Task<UserTabResponse?> GetTabByIdAsync(Guid id)
+        public async Task<UserTabResponse?> GetTabByIdAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var utId = await _context.UserTabs.FindAsync(id);
+            if (utId == null)
+            {
+                _logger.LogInformation("Could not find id");
+                return null;
+            }
+
+            return UserTabResponse.FromBody(utId);
         }
 
-        public Task<UserDetailTabResponses?> GetTabDetailsAsync(Guid tabId)
+        public async Task<UserDetailTabResponses?> GetTabDetailsAsync(Guid tabId)
         {
-            throw new NotImplementedException();
+            var tab = await _context.UserTabs.FullDetail().FirstOrDefaultAsync();
 
+            if (tab == null)
+            {
+                _logger.LogInformation($"Could not find tab id {tab}");
+                return null;
+            }
+
+            return UserDetailTabResponses.FromBody(tab);
         }
 
         public Task<bool> HasOpenTabAsync(Guid userId)
@@ -101,17 +165,8 @@ namespace Application.Services
 
         public Task<bool> IsTabPaidAsync(Guid tabId)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<ScanRequest> ToOrder(string qrToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<UserTabResponse> UpdateAsync(Guid id)
-        {
-            throw new NotImplementedException();
+            //var ok = _context.UserTabs.Where(ut =>  ut.Id == tabId).Any();
+            throw new Exception();
         }
     }
 }
