@@ -52,6 +52,10 @@ namespace Infrastructure.Data
                 entity.SetTableName(entity.GetTableName()!.ToLower());
             }
 
+            modelBuilder.Entity<ContextPart>()
+                .HasIndex(x => x.QrToken)
+                .IsUnique();
+
             base.OnModelCreating(modelBuilder);
 
             SeedData(modelBuilder);

@@ -48,19 +48,5 @@ namespace Infrastructure.Extensions
               .Include(cp => cp.UserTabs
               .Where(ut => ut.Status == TabStatus.Open));
         }
-
-        //public static IQueryable<ContextPart> CheckTables(this IQueryable<ContextPart> query, Guid cpId, Guid userId)
-        //{
-        //    return query.Where(cp => cp.Id == cpId)
-        //        .SelectMany(cp => cp.UserTabs)
-        //        .Where(ut => ut.UserId == userId && !ut.IsClosed)
-        //        .Select(ut => new
-        //        {
-        //            ut.ContextId,
-        //            ut.ContextPartId,
-        //            ut.ContextPart
-        //        })
-        //}
-
     }
 }

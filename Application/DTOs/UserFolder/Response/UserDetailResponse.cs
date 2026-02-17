@@ -1,5 +1,5 @@
 ﻿using Application.DTOs.TransactionFolder;
-using Application.DTOs.UserTabFolder.Resonse;
+using Application.DTOs.UserTabFolder.Response;
 
 namespace Application.DTOs.UserFolder.Response
 {
@@ -15,6 +15,6 @@ namespace Application.DTOs.UserFolder.Response
 
         //navigation property isch
         public IReadOnlyList<UserTabResponse> ? Tabs { get; init; }
-        public IReadOnlyList<TransactionResponse>? Transactions { get; init; }
+        public IReadOnlyList<TransactionSummaryResponse>? Transactions { get; init; }
     }
 }

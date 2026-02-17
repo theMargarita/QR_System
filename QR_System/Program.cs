@@ -17,13 +17,12 @@ namespace QR_System
 
             // Services
             builder.Services.AddScoped<IUserService, UserService>();
-            builder.Services.AddScoped<IQrCodeService, QrCodeService>();
             builder.Services.AddScoped<IContextService, ContextService>();
             builder.Services.AddScoped<IContextPartService, ContextPartService>();
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<ITransactionService, TransactionService>();
             builder.Services.AddScoped<IOwnerService, OwnerService>();
-            //builder.Services.AddScoped<IUserTabService, UserTabService>();
+            builder.Services.AddScoped<IUserTabService, UserTabService>();
 
             // Controllers
             builder.Services.AddControllers();

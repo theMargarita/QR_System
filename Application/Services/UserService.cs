@@ -4,6 +4,7 @@ using Application.IServices;
 using Domain.Models;
 using Infrastructure.Data;
 using Infrastructure.Extensions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Application.Services
@@ -72,7 +73,7 @@ namespace Application.Services
         {
             var user = _context.Users;
 
-            return user.Select(u => UserResponse.FromUser(u)).ToList();
+            return await user.Select(u => UserResponse.FromUser(u)).ToListAsync();
         }
 
         //must test to se if it works
