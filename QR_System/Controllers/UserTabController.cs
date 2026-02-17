@@ -52,27 +52,5 @@ namespace QR_System.Controllers
 
             return Ok(tab);
         }
-
-        [HttpPost("openNewTab")]
-        public async Task<ActionResult<UserTabResponse>> NewTab([FromBody] OpenTabRequest req)
-        {
-            if (req == null)
-            {
-                ModelState.AddModelError("req", "Request body is required.");
-                return ValidationProblem(ModelState);
-            }
-
-            if (string.IsNullOrWhiteSpace(req.QrToken))
-            {
-                ModelState.AddModelError("qrToken", "qrToken is required.");
-                return ValidationProblem(ModelState);
-            }
-
-            var tab = await _tabService.OpenTabAsync(req.QrToken, req.UserId);
-            if (tab == null) return NotFound();
-
-            return Ok(tab);
-        }
-
     }
 }
