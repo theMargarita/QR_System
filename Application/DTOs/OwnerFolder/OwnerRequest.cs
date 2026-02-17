@@ -4,4 +4,7 @@
     {
         public string Name { get; set; } = string.Empty;
     }
+
+
+    public record OwnerRequest2(string Name);
 }

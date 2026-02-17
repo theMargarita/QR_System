@@ -33,7 +33,7 @@ namespace Application.DTOs.CPFolder.Response
                 {
                     Id = ut.Id,
                     UserId = ut.UserId,
-                    ContextId = ut.ContextId,
+                    //PartId = ut.ContextId,
                     CreatedAt = ut.CreatedAt,
                     ClosedAt = ut.ClosedAt,
                     //Status = ut.Status

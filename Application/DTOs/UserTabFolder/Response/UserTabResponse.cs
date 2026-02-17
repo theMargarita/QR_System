@@ -9,7 +9,7 @@ namespace Application.DTOs.UserTabFolder.Response
         public Guid Id { get; init; }
         public Guid UserId { get; init; }
         public string UserFullName { get; init; } = string.Empty;
-        public Guid ContextId { get; init; }
+        public Guid PartId { get; init; }
         public string ContextName { get; init; } = string.Empty;
         public string Status { get; init; } = string.Empty;
         public DateTimeOffset CreatedAt { get; init; }
@@ -31,7 +31,7 @@ namespace Application.DTOs.UserTabFolder.Response
                 Id = tab.Id,
                 UserId = tab.UserId,
                 UserFullName = tab.User != null ? $"{tab.User?.FirstName} {tab.User?.LastName}".Trim() : null,
-                ContextId = tab.ContextId,
+                PartId = tab.ContextPartId.Value,
                 ContextName = tab.ContextPart != null ? tab.ContextPart?.Name ?? string.Empty : null,
                 Status = tab.Status.ToString(),
                 CreatedAt = tab.CreatedAt,
@@ -44,8 +44,8 @@ namespace Application.DTOs.UserTabFolder.Response
                 IsPaid = totalPaid >= totalAmount && totalAmount > 0,
 
                 //nested dtos
-                Transactions = tab.Transactions.Select(TransactionSummaryResponse.FromBody).ToList(),
-                Payments = tab.Payments.Select(PaymentSummaryResponse.FromBody).ToList()
+                Transactions = tab.Transactions?.Select(TransactionSummaryResponse.FromBody).ToList(),
+                Payments = tab.Payments?.Select(PaymentSummaryResponse.FromBody).ToList()
             };
         }
     }
